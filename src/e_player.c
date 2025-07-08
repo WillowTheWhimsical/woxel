@@ -12,24 +12,25 @@ Vector3 get_look_block(Camera3D);
 void place_block(Camera3D cam, int block);
 
 void E_PLAYER_INIT(Entity* this) {
-	this->data = malloc(sizeof(Camera3D) + sizeof(float));
+	this->data = malloc(sizeof(Camera3D) + sizeof(int));
 	this->var = malloc(sizeof(void*) * 2);
 	this->var[0] = this->data;
 	this->var[1] = this->data + sizeof(Camera3D);
 
 	Camera3D* cam = this->var[0];
 	cam->projection = CAMERA_PERSPECTIVE;
-	cam->position = (Vector3){0, 0, 0};
-	cam->target = (Vector3){0, 0, -1};
+	cam->position = (Vector3){10, 12, 10};
+	cam->target = (Vector3){10, 12, 9};
 	cam->up = (Vector3){0, 1, 0};
 	cam->fovy = 90;
 
-	float* sensitivity = this->var[1];
-	*sensitivity = 0.75;
+	int* block = this->var[1];
+	*block = B_DIRT;
 }
 
 void E_PLAYER_TICK(Entity* this) {
 	Camera3D* cam = this->var[0];
+	int* block = this->var[1];
 
 	Vector3 vel = {0, 0, 0};
 	float speed = 0.1;
@@ -48,7 +49,7 @@ void E_PLAYER_TICK(Entity* this) {
 			set_block(v.x, v.y, v.z, B_AIR);
 	}
 	if (input.use) {
-		place_block(*cam, B_DIRT);
+		place_block(*cam, *block);
 	}
 
 	vel.x *= speed;
@@ -57,6 +58,9 @@ void E_PLAYER_TICK(Entity* this) {
 
 	cam->position = Vector3Add(cam->position, vel);
 	cam->target = Vector3Add(cam->target, vel);
+
+	if (input.nextslot && *block < B_STONE) *block += 1;
+	if (input.prevslot && *block > B_DIRT)  *block -= 1;
 
 	if (input.inventory) {
 		if (IsCursorHidden())

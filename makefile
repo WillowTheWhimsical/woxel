@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall
-LDFLAGS = -lraylib -lm
+CFLAGS = -Wall -O3
+LDFLAGS = -lm -lraylib
 
 obj = .build/main.o .build/game.o .build/input.o .build/tick.o .build/draw.o .build/world.o .build/entity.o .build/e_player.o
 target = voxel

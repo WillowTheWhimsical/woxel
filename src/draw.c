@@ -7,64 +7,51 @@
 #include <raylib.h>
 #include <raymath.h>
 
+Color get_block_color(int block) {
+	Color color = WHITE;
+	if (block > B_AIR) {
+		switch (block) {
+			case B_DIRT:
+				color = (Color){100, 50, 0};
+				break;
+			case B_GRASS:
+				color = (Color){50, 150, 50};
+				break;
+			case B_STONE:
+				color = (Color){50, 50, 50};
+				break;
+		}
+	}
+	color.a = 255;
+	return color;
+}
+
 void draw_world() {
 	for_world {
 		int block = get_block(i, j, t);
 		if (block > B_AIR) {
-			Color color = WHITE;
-			switch (block) {
-				case B_DIRT:
-					color = BROWN;
-					break;
-				case B_GRASS:
-					color = GREEN;
-					break;
-				case B_STONE:
-					color = GRAY;
-					break;
-			}
-			DrawCube((Vector3){i, j, t}, 1, 1, 1, color);
+			Color fc = get_block_color(block), bc = fc;
+			bc.r /= 2;
+			bc.g /= 2;
+			bc.b /= 2;
+
+			DrawCube((Vector3){i, j, t}, 1, 1, 1, fc);
+			DrawCubeWires((Vector3){i, j, t}, 1, 1, 1, bc);
 		}
 	}}}
 }
 
-void test1(Camera3D cam) {
-	Vector3 dir = Vector3Normalize(Vector3Subtract(cam.target, cam.position));
-	for (float i = 0; i < 5; i += 0.1) {
-		int x = roundf(cam.position.x + dir.x * i);
-		int y = roundf(cam.position.y + dir.y * i);
-		int z = roundf(cam.position.z + dir.z * i);
-		if (get_block(x, y, z) > B_AIR) {
-			DrawCubeWires((Vector3){x, y, z}, 1, 1, 1, RED);
-			return;
-		}
-	}
-}
-
-void test2(Camera3D cam) {
-	Vector3 dir = Vector3Normalize(Vector3Subtract(cam.target, cam.position));
-	for (float i = 0; i < 5; i += 0.1) {
-		int x = roundf(cam.position.x + dir.x * i);
-		int y = roundf(cam.position.y + dir.y * i);
-		int z = roundf(cam.position.z + dir.z * i);
-		if (get_block(x, y, z) > B_AIR) {
-			x = roundf(cam.position.x + dir.x * (i - 0.1));
-			y = roundf(cam.position.y + dir.y * (i - 0.1));
-			z = roundf(cam.position.z + dir.z * (i - 0.1));
-			DrawCubeWires((Vector3){x, y, z}, 1, 1, 1, BLUE);
-			return;
-		}
-	}
-}
-
 void render() {
-	Camera3D* cam;
+	Camera3D* cam = 0;
+	int* block = 0;
 	for_entity(e)
 		if (e->type == E_PLAYER) {
 			cam = e->var[0];
+			block = e->var[1];
 			break;
 		}
 	}
+	if (cam == 0 || block == 0) return;
 
 	UpdateCameraPro(cam, (Vector3){0, 0, 0},
 		(Vector3){input.mdx * input.sensitivity * IsCursorHidden(),
@@ -76,9 +63,14 @@ void render() {
 
 		BeginMode3D(*cam);
 			draw_world();
-			test1(*cam);
-			test2(*cam);
 		EndMode3D();
+
+		Color fc = get_block_color(*block), bc = fc;
+		bc.r /= 2;
+		bc.g /= 2;
+		bc.b /= 2;
+		DrawRectangle(GetScreenWidth() - 32, 0, 32, 32, fc);
+		DrawRectangleLines(GetScreenWidth() - 32, 0, 32, 32, bc);
 
 		DrawLineEx((Vector2){GetScreenWidth() / 2.f - 8, GetScreenHeight() / 2.f - 8}, (Vector2){GetScreenWidth() / 2.f + 8, GetScreenHeight() / 2.f + 8}, 1, WHITE);
 		DrawLineEx((Vector2){GetScreenWidth() / 2.f + 8, GetScreenHeight() / 2.f - 8}, (Vector2){GetScreenWidth() / 2.f - 8, GetScreenHeight() / 2.f + 8}, 1, WHITE);

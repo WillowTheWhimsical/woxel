@@ -14,9 +14,23 @@ void generate_world(int w, int h, int l) {
 	for (int i = 0; i < w * h * l; i++)
 		world.tile[i] = B_AIR;
 
+	for (int j = 0; j < 5; j++) {
+		for (int t = 0; t < h; t++) {
+			for (int i = 0; i < w; i++) {
+				set_block(i, j, t, B_STONE);
+			}
+		}
+	}
+	for (int j = 5; j < 10; j++) {
+		for (int t = 0; t < h; t++) {
+			for (int i = 0; i < w; i++) {
+				set_block(i, j, t, B_DIRT);
+			}
+		}
+	}
 	for (int t = 0; t < h; t++) {
 		for (int i = 0; i < w; i++) {
-			set_block(i, 0, t, B_DIRT);
+			set_block(i, 10, t, B_GRASS);
 		}
 	}
 }

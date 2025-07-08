@@ -14,12 +14,10 @@ void uninit_entities() {
 }
 
 Entity* SpawnEntity(int type) {
-	if (entities > 0) {
+	if (entities > 0)
 		entity = malloc(sizeof(Entity));
-	}
-	else {
+	else
 		entity = realloc(entity, sizeof(Entity) * (entities + 1));
-	}
 	
 	Entity* new_entity = &entity[entities];
 
