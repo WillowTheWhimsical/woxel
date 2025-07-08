@@ -1,17 +1,20 @@
-CC=gcc
-CFLAGS=-Wall
-LDFLAGS=-lraylib
+CC = gcc
+CFLAGS = -Wall
+LDFLAGS = -lraylib -lm
 
-SRC=./src/*.c
-TARGET=./voxel
+obj = .build/main.o .build/game.o .build/input.o .build/tick.o .build/draw.o .build/world.o .build/entity.o .build/e_player.o
+target = voxel
 
-all: debug
+all: setup $(target)
 
-debug:
-	$(CC) $(CFLAGS) -Werror $(SRC) -o $(TARGET) $(LDFLAGS)
+$(target): $(obj)
+	$(CC) $^ -o $@ $(LDFLAGS)
 
-release:
-	$(CC) $(CFLAGS) -O3 $(SRC) -o $(TARGET) $(LDFLAGS)
+$(obj): .build/%.o: src/%.c
+	$(CC) -c $(CFLAGS) $^ -o $@
 
+setup:
+	mkdir -p .build
+	
 clean:
-	rm -f $(TARGET)
+	rm -rf .build $(target)
