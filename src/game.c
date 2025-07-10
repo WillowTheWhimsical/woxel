@@ -2,6 +2,7 @@
 #include "input.h"
 #include "tick.h"
 #include "draw.h"
+#include "texture.h"
 #include "world.h"
 #include "entity.h"
 
@@ -34,6 +35,8 @@ void init() {
 	set_binds();
 	input.sensitivity = sensitivity;
 
+	load_textures();
+
 	if (path[0] == '\0')
 		generate_world(20, 20, 20);
 	else
@@ -52,6 +55,7 @@ int loop() {
 
 void uninit() {
 	destroy_world();
+	unload_textures();
 }
 
 void process_args(int argc, char* argv[]) {

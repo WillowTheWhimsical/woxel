@@ -4,9 +4,9 @@
 #include "stdbool.h"
 
 struct Input {
-	int key_forward, key_backward, key_left, key_right, key_jump, key_crouch, key_hit, key_use, key_inventory, key_nextslot, key_prevslot, key_save;
-	int forward, backward, left, right, jump, crouch, hit, use, inventory, nextslot, prevslot, save;
-	bool hit_bool, use_bool, inventory_bool, nextslot_bool, prevslot_bool, save_bool;
+	int key_forward, key_backward, key_left, key_right, key_jump, key_crouch, key_hit, key_use, key_inventory, key_nextslot, key_prevslot, key_fly, key_save;
+	int forward, backward, left, right, jump, crouch, hit, use, inventory, nextslot, prevslot, fly, save;
+	bool hit_bool, use_bool, inventory_bool, nextslot_bool, prevslot_bool, fly_bool, save_bool;
 	float mdx, mdy, sensitivity;
 };
 extern struct Input input;
