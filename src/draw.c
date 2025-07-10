@@ -59,7 +59,7 @@ void render() {
 	);
 	
 	BeginDrawing();
-		ClearBackground(BLACK);
+		ClearBackground((Color){50, 150, 200});
 
 		BeginMode3D(*cam);
 			draw_world();
