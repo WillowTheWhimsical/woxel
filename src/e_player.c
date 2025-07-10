@@ -12,13 +12,13 @@ Vector3 get_look_block(Camera3D);
 void place_block(Camera3D cam, int block);
 
 void E_PLAYER_INIT(Entity* this) {
-	this->data = malloc(sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector2) + sizeof(int));
+	this->data = malloc(sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector3) + sizeof(int));
 	this->var = malloc(sizeof(void*) * 5);
 	this->var[0] = this->data;
 	this->var[1] = this->data + sizeof(Camera3D);
 	this->var[2] = this->data + sizeof(Camera3D) + sizeof(Vector3);
 	this->var[3] = this->data + sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3);
-	this->var[4] = this->data + sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector2);
+	this->var[4] = this->data + sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector3);
 
 	Camera3D* cam = this->var[0];
 	cam->projection = CAMERA_PERSPECTIVE;
@@ -38,8 +38,9 @@ void E_PLAYER_INIT(Entity* this) {
 	Vector3* vel = this->var[2];
 	vel->x = vel->y = vel->z = 0;
 
-	Vector2* size = this->var[3];
-	vel->x = vel->y = 0.2;
+	Vector3* size = this->var[3];
+	size->x = size->z = 0.2;
+	size->y = 1.5;
 
 	int* block = this->var[4];
 	*block = B_DIRT;
@@ -56,7 +57,7 @@ void E_PLAYER_TICK(Entity* this) {
 	Camera3D* cam = this->var[0];
 	Vector3* pos = this->var[1];
 	Vector3* vel = this->var[2];
-	Vector2* size = this->var[3];
+	Vector3* size = this->var[3];
 	int* block = this->var[4];
 
 	Vector2 dir = get_movedir(*cam);
@@ -67,14 +68,41 @@ void E_PLAYER_TICK(Entity* this) {
 		if (vel->y > terminal_vel)
 			vel->y -= gravity;
 
-		if (get_block(pos->x + vel->x, pos->y + vel->y, pos->z + vel->z) > B_AIR) {
-			grounded = true;
+		if (get_block(pos->x + vel->x - size->x, pos->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x + vel->x - size->x, pos->y, pos->z + size->z) > B_AIR
+		 || get_block(pos->x + vel->x + size->x, pos->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x + vel->x + size->x, pos->y, pos->z + size->z) > B_AIR
+		 || get_block(pos->x + vel->x - size->x, pos->y + size->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x + vel->x - size->x, pos->y + size->y, pos->z + size->z) > B_AIR
+		 || get_block(pos->x + vel->x + size->x, pos->y + size->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x + vel->x + size->x, pos->y + size->y, pos->z + size->z) > B_AIR)
+			vel->x = 0;
+
+		if (get_block(pos->x - size->x, pos->y + vel->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x - size->x, pos->y + vel->y, pos->z + size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y + vel->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y + vel->y, pos->z + size->z) > B_AIR
+		 || get_block(pos->x - size->x, pos->y + vel->y + size->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x - size->x, pos->y + vel->y + size->y, pos->z + size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y + vel->y + size->y, pos->z - size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y + vel->y + size->y, pos->z + size->z) > B_AIR) {
 			vel->y = 0;
+			grounded = true;
 		}
 
+		if (get_block(pos->x - size->x, pos->y, pos->z + vel->z - size->z) > B_AIR
+		 || get_block(pos->x - size->x, pos->y, pos->z + vel->z + size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y, pos->z + vel->z - size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y, pos->z + vel->z + size->z) > B_AIR
+		 || get_block(pos->x - size->x, pos->y + size->y, pos->z + vel->z - size->z) > B_AIR
+		 || get_block(pos->x - size->x, pos->y + size->y, pos->z + vel->z + size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y + size->y, pos->z + vel->z - size->z) > B_AIR
+		 || get_block(pos->x + size->x, pos->y + size->y, pos->z + vel->z + size->z) > B_AIR)
+			vel->z = 0;
+
 		if (input.jump && grounded) {
+			vel->y = 0.17;
 			grounded = false;
-			vel->y = 0.2;
 		}
 	}
 	else {
