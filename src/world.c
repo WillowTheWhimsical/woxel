@@ -2,6 +2,7 @@
 #include "blocks.h"
 
 #include <malloc.h>
+#include <stdio.h>
 
 struct World world;
 
