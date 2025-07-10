@@ -1,6 +1,7 @@
 #include "world.h"
 #include "blocks.h"
 
+#include <stdio.h>
 #include <malloc.h>
 
 struct World world;
@@ -33,6 +34,23 @@ void generate_world(int w, int h, int l) {
 			set_block(i, 10, t, B_GRASS);
 		}
 	}
+}
+
+void save_world(const char* path) {
+	FILE* file = fopen(path, "w");
+	fwrite(world.tile, sizeof(int), world.w * world.h * world.l, file);
+	fclose(file);
+}
+
+void load_world(const char* path) {
+	world.tile = malloc(sizeof(int) * 20 * 20 * 20);
+	world.w = 20;
+	world.h = 20;
+	world.l = 20;
+
+	FILE* file = fopen(path, "r");
+	fread(world.tile, sizeof(int), 20 * 20 * 20, file);
+	fclose(file);
 }
 
 void destroy_world() {

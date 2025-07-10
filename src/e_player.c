@@ -68,6 +68,9 @@ void E_PLAYER_TICK(Entity* this) {
 		else
 			DisableCursor();
 	}
+
+	if (input.save)
+		save_world("world.wwf");
 }
 
 void __attribute__((constructor)) _construct_player() {

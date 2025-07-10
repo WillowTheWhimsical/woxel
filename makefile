@@ -15,6 +15,6 @@ $(obj): .build/%.o: src/%.c
 
 setup:
 	mkdir -p .build
-	
+
 clean:
 	rm -rf .build $(target)

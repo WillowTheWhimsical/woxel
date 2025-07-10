@@ -16,6 +16,7 @@ void set_binds() {
 	input.key_inventory = KEY_TAB;
 	input.key_nextslot  = KEY_E;
 	input.key_prevslot  = KEY_Q;
+	input.key_save      = KEY_F1;
 }
 
 void get_input() {
@@ -30,6 +31,7 @@ void get_input() {
 	input.inventory = IsKeyDown(input.key_inventory)   && input.inventory_bool;
 	input.nextslot  = IsKeyDown(input.key_nextslot)    && input.nextslot_bool;
 	input.prevslot  = IsKeyDown(input.key_prevslot)    && input.prevslot_bool;
+	input.save      = IsKeyDown(input.key_save)        && input.save_bool;
 	input.mdx       = GetMouseDelta().x;
 	input.mdy       = GetMouseDelta().y;
 }
@@ -40,9 +42,11 @@ void input_tick() {
 	if (input.inventory) input.inventory_bool = false;
 	if (input.nextslot)  input.nextslot_bool = false;
 	if (input.prevslot)  input.prevslot_bool = false;
+	if (input.save)      input.save_bool = false;
 	if (IsMouseButtonUp(input.key_hit)) input.hit_bool = true;
 	if (IsMouseButtonUp(input.key_use)) input.use_bool = true;
 	if (IsKeyUp(input.key_inventory))   input.inventory_bool = true;
 	if (IsKeyUp(input.key_nextslot))    input.nextslot_bool = true;
 	if (IsKeyUp(input.key_prevslot))    input.prevslot_bool = true;
+	if (IsKeyUp(input.key_save))        input.save_bool = true;
 }

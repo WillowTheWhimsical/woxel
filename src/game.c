@@ -8,9 +8,11 @@
 #include <raylib.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 bool fullscreen = false;
 float sensitivity = 0.25;
+char path[256] = {'\0'};
 
 void init() {
 	SetTraceLogLevel(LOG_WARNING);
@@ -32,7 +34,11 @@ void init() {
 	set_binds();
 	input.sensitivity = sensitivity;
 
-	generate_world(20, 20, 20);
+	if (path[0] == '\0')
+		generate_world(20, 20, 20);
+	else
+		load_world(path);
+
 	SpawnEntity(E_PLAYER);
 }
 
@@ -50,13 +56,16 @@ void uninit() {
 
 void process_args(int argc, char* argv[]) {
 	int opt;
-	while ((opt = getopt(argc, argv, "fs:")) != -1) {
+	while ((opt = getopt(argc, argv, "fs:o:")) != -1) {
 		switch (opt) {
 			case 'f':
 				fullscreen = true;
 				break;
 			case 's':
 				sensitivity = atoi(optarg) / 100.f;
+				break;
+			case 'o':
+				strncpy(path, optarg, 255);
 				break;
 		}
 	}
