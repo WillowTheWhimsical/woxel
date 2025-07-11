@@ -104,6 +104,20 @@ void E_PLAYER_TICK(Entity* this) {
 			vel->y = 0.17;
 			grounded = false;
 		}
+
+		if (input.crouch && grounded) {
+			if (get_block(pos->x + vel->x - size->x, pos->y - 1, pos->z - size->z) == B_AIR
+			 && get_block(pos->x + vel->x - size->x, pos->y - 1, pos->z + size->z) == B_AIR
+			 && get_block(pos->x + vel->x + size->x, pos->y - 1, pos->z - size->z) == B_AIR
+			 && get_block(pos->x + vel->x + size->x, pos->y - 1, pos->z + size->z) == B_AIR)
+				vel->x = 0;
+
+			if (get_block(pos->x - size->x, pos->y - 1, pos->z + vel->z - size->z) == B_AIR
+			 && get_block(pos->x - size->x, pos->y - 1, pos->z + vel->z + size->z) == B_AIR
+			 && get_block(pos->x + size->x, pos->y - 1, pos->z + vel->z - size->z) == B_AIR
+			 && get_block(pos->x + size->x, pos->y - 1, pos->z + vel->z + size->z) == B_AIR)
+				vel->z = 0;
+		}
 	}
 	else {
 		if (input.jump)
