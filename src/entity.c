@@ -26,7 +26,7 @@ Entity* spawn_entity(int type) {
 	int id;
 	for (bool done = true; !done;) {
 		id = rand();
-		for_entity(e)
+		for_entities(e)
 			if (id == e->id) {
 				done = false;
 				break;

@@ -1,11 +1,6 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-#define for_world \
-for (int t = 0; t < world.l; t++) { \
-for (int j = 0; j < world.h; j++) { \
-for (int i = 0; i < world.w; i++)
-
 struct World {
 	int* tile;
 	int w, h, l;

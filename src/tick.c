@@ -11,7 +11,7 @@ void tick() {
 	if (timer > 1.f / 60.f) {
 		input_tick();
 
-		for_entity(e)
+		for_entities(e)
 			entity_tick(e);
 		}
 

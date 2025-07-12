@@ -5,7 +5,7 @@
 
 #include <raylib.h>
 
-#define for_entity(e) for (int i = 0; i < entities; i++) { Entity* e = &entity[i];
+#define for_entities(e) for (int i = 0; i < entities; i++) { Entity* e = &entity[i];
 #define entity_init(entity) ENTITY_INIT[entity->type](entity);
 #define entity_tick(entity) ENTITY_TICK[entity->type](entity);
 

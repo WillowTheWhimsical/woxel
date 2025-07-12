@@ -9,77 +9,89 @@
 #include <raymath.h>
 #include <rlgl.h>
 
-void DrawCubeTextureRec(Texture2D texture, Rectangle source, Vector3 position, float width, float height, float length, Color color) {
-	float x = position.x;
-	float y = position.y;
-	float z = position.z;
-	float texWidth = (float)texture.width;
-	float texHeight = (float)texture.height;
+void draw_block(float x, float y, float z, float width, float height, float length, int block, bool cull[6]) {
+	Texture* tex = &texture[block - 1];
+	Rectangle source = {0, 0, tex->width, tex->height};
+	float texWidth = (float)tex->width;
+	float texHeight = (float)tex->height;
 
-	rlSetTexture(texture.id);
+	rlSetTexture(tex->id);
 
 	rlBegin(RL_QUADS);
-	rlColor4ub(color.r, color.g, color.b, color.a);
+	rlColor4ub(255, 255, 255, 255);
 
-	rlNormal3f(0.0f, 0.0f, 1.0f);
-	rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x, y, z + 1);
-	rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x + 1, y, z + 1);
-	rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-	rlVertex3f(x + 1, y + 1, z + 1);
-	rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-	rlVertex3f(x, y + 1, z + 1);
+	if (!cull[0]) {
+		rlNormal3f(0.0f, 0.0f, 1.0f);
+		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x, y, z + length);
+		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x + width, y, z + length);
+		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
+		rlVertex3f(x + width, y + height, z + length);
+		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
+		rlVertex3f(x, y + height, z + length);
+	}
 
-	rlNormal3f(0.0f, 0.0f, -1.0f);
-	rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x, y, z);
-	rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-	rlVertex3f(x, y + 1, z);
-	rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-	rlVertex3f(x + 1, y + 1, z);
-	rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x + 1, y, z);
+	if (!cull[1]) {
+		rlNormal3f(0.0f, 0.0f, -1.0f);
+		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x, y, z);
+		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
+		rlVertex3f(x, y + height, z);
+		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
+		rlVertex3f(x + width, y + height, z);
+		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x + width, y, z);
+	}
 
-	rlNormal3f(0.0f, 1.0f, 0.0f);
-	rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-	rlVertex3f(x, y + 1, z);
-	rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x, y + 1, z + 1);
-	rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x + 1, y + 1, z + 1);
-	rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-	rlVertex3f(x + 1, y + 1, z);
+	if (!cull[2]) {
+		rlNormal3f(0.0f, 1.0f, 0.0f);
+		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
+		rlVertex3f(x, y + height, z);
+		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x, y + height, z + length);
+		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x + width, y + height, z + length);
+		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
+		rlVertex3f(x + width, y + height, z);
+	}
 
-	rlNormal3f(0.0f, -1.0f, 0.0f);
-	rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-	rlVertex3f(x, y, z);
-	rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-	rlVertex3f(x + 1, y, z);
-	rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x + 1, y, z + 1);
-	rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x, y, z + 1);
+	if (!cull[3]) {
+		rlNormal3f(0.0f, -1.0f, 0.0f);
+		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
+		rlVertex3f(x, y, z);
+		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
+		rlVertex3f(x + width, y, z);
+		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x + width, y, z + length);
+		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x, y, z + length);
+	}
 
-	rlNormal3f(1.0f, 0.0f, 0.0f);
-	rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x + 1, y, z);
-	rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-	rlVertex3f(x + 1, y + 1, z);
-	rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-	rlVertex3f(x + 1, y + 1, z + 1);
-	rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x + 1, y, z + 1);
+	if (!cull[4]) {
+		rlNormal3f(1.0f, 0.0f, 0.0f);
+		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x + width, y, z);
+		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
+		rlVertex3f(x + width, y + height, z);
+		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
+		rlVertex3f(x + width, y + height, z + length);
+		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x + width, y, z + length);
+	}
 
-	rlNormal3f(-1.0f, 0.0f, 0.0f);
-	rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x, y, z);
-	rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-	rlVertex3f(x, y, z + 1);
-	rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-	rlVertex3f(x, y + 1, z + 1);
-	rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-	rlVertex3f(x, y + 1, z);
+
+	if (!cull[5]) {
+		rlNormal3f(-1.0f, 0.0f, 0.0f);
+		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x, y, z);
+		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
+		rlVertex3f(x, y, z + length);
+		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
+		rlVertex3f(x, y + height, z + length);
+		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
+		rlVertex3f(x, y + height, z);
+	}
 
 	rlEnd();
 
@@ -87,18 +99,30 @@ void DrawCubeTextureRec(Texture2D texture, Rectangle source, Vector3 position, f
 }
 
 void draw_world() {
-	for_world {
-		int block = get_block(i, j, t);
-		if (block > B_AIR) {
-			DrawCubeTextureRec(texture[block - 1], (Rectangle){0, 0, texture[block - 1].width, texture[block - 1].height}, (Vector3){i, j, t}, 1, 1, 1, WHITE);
+	for (int t = 0; t < world.l; t++) {
+		for (int j = 0; j < world.h; j++) {
+			for (int i = 0; i < world.w; i++) {
+				bool cull[6] = {
+					get_block(i, j, t + 1) > B_AIR,
+					get_block(i, j, t - 1) > B_AIR,
+					get_block(i, j + 1, t) > B_AIR,
+					get_block(i, j - 1, t) > B_AIR,
+					get_block(i + 1, j, t) > B_AIR,
+					get_block(i - 1, j, t) > B_AIR,
+				};
+				int block = get_block(i, j, t);
+				if (block > B_AIR) {
+					draw_block(i, j, t, 1, 1, 1, block, cull);
+				}
+			}
 		}
-	}}}
+	}
 }
 
 void render() {
 	Camera3D* cam = 0;
 	int* block = 0;
-	for_entity(e)
+	for_entities(e)
 		if (e->type == E_PLAYER) {
 			cam = e->var[0];
 			block = e->var[1];
