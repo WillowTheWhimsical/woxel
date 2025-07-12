@@ -30,8 +30,6 @@ void init() {
 	DisableCursor();
 	SetExitKey(KEY_NULL);
 
-	// SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
-
 	set_binds();
 	input.sensitivity = sensitivity;
 
@@ -42,7 +40,7 @@ void init() {
 	else
 		load_world(path);
 
-	SpawnEntity(E_PLAYER);
+	spawn_entity(E_PLAYER);
 }
 
 int loop() {

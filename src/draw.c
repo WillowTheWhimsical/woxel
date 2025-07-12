@@ -101,7 +101,7 @@ void render() {
 	for_entity(e)
 		if (e->type == E_PLAYER) {
 			cam = e->var[0];
-			block = e->var[4];
+			block = e->var[1];
 			break;
 		}
 	}

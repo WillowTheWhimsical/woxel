@@ -12,13 +12,10 @@ Vector3 get_look_block(Camera3D);
 void place_block(Camera3D cam, int block);
 
 void E_PLAYER_INIT(Entity* this) {
-	this->data = malloc(sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector3) + sizeof(int));
-	this->var = malloc(sizeof(void*) * 5);
+	this->data = malloc(sizeof(Camera3D) + sizeof(int));
+	this->var = malloc(sizeof(void*) * 2);
 	this->var[0] = this->data;
 	this->var[1] = this->data + sizeof(Camera3D);
-	this->var[2] = this->data + sizeof(Camera3D) + sizeof(Vector3);
-	this->var[3] = this->data + sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3);
-	this->var[4] = this->data + sizeof(Camera3D) + sizeof(Vector3) + sizeof(Vector3) + sizeof(Vector3);
 
 	Camera3D* cam = this->var[0];
 	cam->projection = CAMERA_PERSPECTIVE;
@@ -27,23 +24,20 @@ void E_PLAYER_INIT(Entity* this) {
 	cam->up = (Vector3){0, 1, 0};
 	cam->fovy = 90;
 
-	Vector3* pos = this->var[1];
-	pos->x = pos->z = 10;
-	pos->y = 14;
+	int* block = this->var[1];
+	*block = B_DIRT;
 
-	cam->position = Vector3Add(cam->position, *pos);
+	this->pos.x = this->pos.z = 10;
+	this->pos.y = 14;
+
+	this->vel.x = this->vel.y = this->vel.z = 0;
+
+	this->size.x = this->size.z = 0.2;
+	this->size.y = 1.8;
+
+	cam->position = Vector3Add(cam->position, this->pos);
 	cam->position.y += 1.5;
 	cam->target = Vector3Add(cam->target, cam->position);
-
-	Vector3* vel = this->var[2];
-	vel->x = vel->y = vel->z = 0;
-
-	Vector3* size = this->var[3];
-	size->x = size->z = 0.2;
-	size->y = 1.5;
-
-	int* block = this->var[4];
-	*block = B_DIRT;
 }
 
 void E_PLAYER_TICK(Entity* this) {
@@ -55,77 +49,50 @@ void E_PLAYER_TICK(Entity* this) {
 	const float terminal_vel = -1;
 
 	Camera3D* cam = this->var[0];
-	Vector3* pos = this->var[1];
-	Vector3* vel = this->var[2];
-	Vector3* size = this->var[3];
-	int* block = this->var[4];
+	int* block = this->var[1];
 
 	Vector2 dir = get_movedir(*cam);
-	vel->x = dir.x * speed;
-	vel->z = dir.y * speed;
+	this->vel.x = dir.x * speed;
+	this->vel.z = dir.y * speed;
 
 	if (!flying) {
-		if (vel->y > terminal_vel)
-			vel->y -= gravity;
+		if (this->vel.y > terminal_vel)
+			this->vel.y -= gravity;
 
-		if (get_block(pos->x + vel->x - size->x, pos->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x + vel->x - size->x, pos->y, pos->z + size->z) > B_AIR
-		 || get_block(pos->x + vel->x + size->x, pos->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x + vel->x + size->x, pos->y, pos->z + size->z) > B_AIR
-		 || get_block(pos->x + vel->x - size->x, pos->y + size->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x + vel->x - size->x, pos->y + size->y, pos->z + size->z) > B_AIR
-		 || get_block(pos->x + vel->x + size->x, pos->y + size->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x + vel->x + size->x, pos->y + size->y, pos->z + size->z) > B_AIR)
-			vel->x = 0;
-
-		if (get_block(pos->x - size->x, pos->y + vel->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x - size->x, pos->y + vel->y, pos->z + size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y + vel->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y + vel->y, pos->z + size->z) > B_AIR
-		 || get_block(pos->x - size->x, pos->y + vel->y + size->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x - size->x, pos->y + vel->y + size->y, pos->z + size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y + vel->y + size->y, pos->z - size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y + vel->y + size->y, pos->z + size->z) > B_AIR) {
-			vel->y = 0;
+		if (get_block(this->pos.x - this->size.x, this->pos.y + this->vel.y, this->pos.z - this->size.z) > B_AIR
+		 || get_block(this->pos.x - this->size.x, this->pos.y + this->vel.y, this->pos.z + this->size.z) > B_AIR
+		 || get_block(this->pos.x + this->size.x, this->pos.y + this->vel.y, this->pos.z - this->size.z) > B_AIR
+		 || get_block(this->pos.x + this->size.x, this->pos.y + this->vel.y, this->pos.z + this->size.z) > B_AIR)
 			grounded = true;
-		}
 
-		if (get_block(pos->x - size->x, pos->y, pos->z + vel->z - size->z) > B_AIR
-		 || get_block(pos->x - size->x, pos->y, pos->z + vel->z + size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y, pos->z + vel->z - size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y, pos->z + vel->z + size->z) > B_AIR
-		 || get_block(pos->x - size->x, pos->y + size->y, pos->z + vel->z - size->z) > B_AIR
-		 || get_block(pos->x - size->x, pos->y + size->y, pos->z + vel->z + size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y + size->y, pos->z + vel->z - size->z) > B_AIR
-		 || get_block(pos->x + size->x, pos->y + size->y, pos->z + vel->z + size->z) > B_AIR)
-			vel->z = 0;
+		entity_collision(this);
 
 		if (input.jump && grounded) {
-			vel->y = 0.17;
+			this->vel.y = 0.17;
 			grounded = false;
 		}
 
 		if (input.crouch && grounded) {
-			if (get_block(pos->x + vel->x - size->x, pos->y - 1, pos->z - size->z) == B_AIR
-			 && get_block(pos->x + vel->x - size->x, pos->y - 1, pos->z + size->z) == B_AIR
-			 && get_block(pos->x + vel->x + size->x, pos->y - 1, pos->z - size->z) == B_AIR
-			 && get_block(pos->x + vel->x + size->x, pos->y - 1, pos->z + size->z) == B_AIR)
-				vel->x = 0;
+			if (get_block(this->pos.x + this->vel.x - this->size.x, this->pos.y - 1, this->pos.z - this->size.z) == B_AIR
+			 && get_block(this->pos.x + this->vel.x - this->size.x, this->pos.y - 1, this->pos.z + this->size.z) == B_AIR
+			 && get_block(this->pos.x + this->vel.x + this->size.x, this->pos.y - 1, this->pos.z - this->size.z) == B_AIR
+			 && get_block(this->pos.x + this->vel.x + this->size.x, this->pos.y - 1, this->pos.z + this->size.z) == B_AIR)
+				this->vel.x = 0;
 
-			if (get_block(pos->x - size->x, pos->y - 1, pos->z + vel->z - size->z) == B_AIR
-			 && get_block(pos->x - size->x, pos->y - 1, pos->z + vel->z + size->z) == B_AIR
-			 && get_block(pos->x + size->x, pos->y - 1, pos->z + vel->z - size->z) == B_AIR
-			 && get_block(pos->x + size->x, pos->y - 1, pos->z + vel->z + size->z) == B_AIR)
-				vel->z = 0;
+			if (get_block(this->pos.x - this->size.x, this->pos.y - 1, this->pos.z + this->vel.z - this->size.z) == B_AIR
+			 && get_block(this->pos.x - this->size.x, this->pos.y - 1, this->pos.z + this->vel.z + this->size.z) == B_AIR
+			 && get_block(this->pos.x + this->size.x, this->pos.y - 1, this->pos.z + this->vel.z - this->size.z) == B_AIR
+			 && get_block(this->pos.x + this->size.x, this->pos.y - 1, this->pos.z + this->vel.z + this->size.z) == B_AIR)
+				this->vel.z = 0;
 		}
 	}
 	else {
 		if (input.jump)
-			vel->y = speed;
+			this->vel.y = speed;
 		else if (input.crouch)
-			vel->y = -speed;
+			this->vel.y = -speed;
 		else
-			vel->y = 0;
+			this->vel.y = 0;
 	}
 
 	if (input.hit) {
@@ -137,9 +104,9 @@ void E_PLAYER_TICK(Entity* this) {
 		place_block(*cam, *block);
 	}
 
-	*pos = Vector3Add(*pos, *vel);
-	cam->position = Vector3Add(cam->position, *vel);
-	cam->target = Vector3Add(cam->target, *vel);
+	this->pos = Vector3Add(this->pos, this->vel);
+	cam->position = Vector3Add(cam->position, this->vel);
+	cam->target = Vector3Add(cam->target, this->vel);
 
 	if (input.nextslot && *block < B_STONE) *block += 1;
 	if (input.prevslot && *block > B_DIRT)  *block -= 1;
