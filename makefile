@@ -3,7 +3,7 @@ CFLAGS = -Wall -O3
 LDFLAGS = -lm -lraylib
 
 obj = .build/main.o .build/game.o .build/input.o .build/tick.o .build/draw.o .build/world.o .build/texture.o .build/entity.o .build/e_player.o
-target = voxel
+target = woxel
 
 all: setup $(target)
 

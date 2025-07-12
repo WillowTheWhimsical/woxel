@@ -21,11 +21,11 @@ void init() {
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	if (fullscreen) {
-		InitWindow(0, 0, "Voxel");
+		InitWindow(0, 0, "Willow's Whimsical World");
 		ToggleFullscreen();
 	}
 	else
-		InitWindow(800, 600, "Voxel");
+		InitWindow(800, 600, "Willow's Whimsical World");
 
 	DisableCursor();
 	SetExitKey(KEY_NULL);
