@@ -2,8 +2,6 @@
 #include "input.h"
 #include "entity.h"
 
-#include <raylib.h>
-
 float timer = 0;
 
 void tick() {

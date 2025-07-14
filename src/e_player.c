@@ -4,7 +4,6 @@
 #include "blocks.h"
 
 #include <malloc.h>
-#include <raylib.h>
 #include <raymath.h>
 
 Vector2 get_movedir(Camera3D);
@@ -27,8 +26,9 @@ void E_PLAYER_INIT(Entity* this) {
 	int* block = this->var[1];
 	*block = B_DIRT;
 
-	this->pos.x = this->pos.z = 10;
-	this->pos.y = 14;
+	this->pos.x = world.w * 0.5;
+	this->pos.z = world.l * 0.5;
+	this->pos.y = 13;
 
 	this->vel.x = this->vel.y = this->vel.z = 0;
 

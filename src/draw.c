@@ -5,8 +5,6 @@
 #include "entity.h"
 #include "blocks.h"
 
-#include <raylib.h>
-#include <raymath.h>
 #include <rlgl.h>
 
 void draw_block(float x, float y, float z, float width, float height, float length, int block, bool cull[6]) {
@@ -102,16 +100,16 @@ void draw_world() {
 	for (int t = 0; t < world.l; t++) {
 		for (int j = 0; j < world.h; j++) {
 			for (int i = 0; i < world.w; i++) {
-				bool cull[6] = {
-					get_block(i, j, t + 1) > B_AIR,
-					get_block(i, j, t - 1) > B_AIR,
-					get_block(i, j + 1, t) > B_AIR,
-					get_block(i, j - 1, t) > B_AIR,
-					get_block(i + 1, j, t) > B_AIR,
-					get_block(i - 1, j, t) > B_AIR,
-				};
 				int block = get_block(i, j, t);
 				if (block > B_AIR) {
+					bool cull[6] = {
+						get_block(i, j, t + 1) > B_AIR,
+						get_block(i, j, t - 1) > B_AIR,
+						get_block(i, j + 1, t) > B_AIR,
+						get_block(i, j - 1, t) > B_AIR,
+						get_block(i + 1, j, t) > B_AIR,
+						get_block(i - 1, j, t) > B_AIR,
+					};
 					draw_block(i, j, t, 1, 1, 1, block, cull);
 				}
 			}

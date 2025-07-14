@@ -2,7 +2,7 @@
 #define WORLD_H
 
 struct World {
-	int* tile;
+	char* data;
 	int w, h, l;
 };
 extern struct World world;
