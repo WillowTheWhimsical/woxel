@@ -11,7 +11,7 @@ $(target): $(obj)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 $(obj): .build/%.o: src/%.c
-	$(CC) -c $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) -c $^ -o $@
 
 setup:
 	mkdir -p .build
