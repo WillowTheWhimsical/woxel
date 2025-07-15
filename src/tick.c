@@ -2,17 +2,22 @@
 #include "input.h"
 #include "entity.h"
 
-float timer = 0;
+const float TICKRATE = 1 / 60.f;
+
+float t, lt, dt, ptimer = 0;
 
 void tick() {
-	timer += GetFrameTime();
-	if (timer > 1.f / 60.f) {
+	lt = t;
+	t = GetTime();
+	ptimer += t - lt;
+
+	while (ptimer >= TICKRATE) {
 		input_tick();
 
 		for_entities(e)
 			entity_tick(e);
 		}
 
-		timer = 0;
+		ptimer -= TICKRATE;
 	}
 }

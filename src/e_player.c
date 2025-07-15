@@ -45,6 +45,7 @@ void E_PLAYER_TICK(Entity* this) {
 	static bool grounded;
 
 	const float speed = 0.1;
+	const float jump_speed = 0.17;
 	const float gravity = 0.01;
 	const float terminal_vel = -1;
 
@@ -68,7 +69,7 @@ void E_PLAYER_TICK(Entity* this) {
 		entity_collision(this);
 
 		if (input.jump && grounded) {
-			this->vel.y = 0.17;
+			this->vel.y = jump_speed;
 			grounded = false;
 		}
 
@@ -87,20 +88,26 @@ void E_PLAYER_TICK(Entity* this) {
 		}
 	}
 	else {
-		if (input.jump)
+		if (input.jump) {
+			input.jump = false;
 			this->vel.y = speed;
-		else if (input.crouch)
+		}
+		else if (input.crouch) {
+			input.crouch = false;
 			this->vel.y = -speed;
+		}
 		else
 			this->vel.y = 0;
 	}
 
 	if (input.hit) {
+		input.hit = false;
 		Vector3 v = get_look_block(*cam);
 		if (v.x != 0 || v.y != 0 || v.z != 0)
 			set_block(v.x, v.y, v.z, B_AIR);
 	}
 	if (input.use) {
+		input.use = false;
 		place_block(*cam, *block);
 	}
 
@@ -108,21 +115,19 @@ void E_PLAYER_TICK(Entity* this) {
 	cam->position = Vector3Add(cam->position, this->vel);
 	cam->target = Vector3Add(cam->target, this->vel);
 
-	if (input.nextslot && *block < B_STONE) *block += 1;
-	if (input.prevslot && *block > B_DIRT)  *block -= 1;
+	if (input.nextslot && *block < B_STONE) { input.nextslot = false; *block += 1; }
+	if (input.prevslot && *block > B_DIRT)  { input.prevslot = false; *block -= 1; }
 
 	if (input.inventory) {
+		input.inventory = false;
 		if (IsCursorHidden())
 			EnableCursor();
 		else
 			DisableCursor();
 	}
 
-	if (input.fly)
-		flying = !flying;
-
-	if (input.save)
-		save_world("world.wwf");
+	if (input.fly) {input.fly = false; flying = !flying; }
+	if (input.save) { input.save = false; save_world("world.wwf"); }
 }
 
 void __attribute__((constructor)) _construct_player() {
