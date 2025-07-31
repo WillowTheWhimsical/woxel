@@ -189,7 +189,7 @@ void E_PLAYER_TICK(Entity* this) {
 		if (menu->option[4]) {
 			menu->option[4] = false;
 			PlaySound(sound[S_BUTTON]);
-			if (!GetRandomValue(1, 69))
+			if (GetRandomValue(1, 69) == 1)
 				PlaySound(sound[S_FIDDLESTICKS]);
 		}
 	}
