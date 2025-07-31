@@ -4,6 +4,7 @@
 #include "draw.h"
 #include "texture.h"
 #include "sound.h"
+#include "music.h"
 #include "world.h"
 #include "entity.h"
 
@@ -50,6 +51,7 @@ int loop() {
 	get_input();
 	tick();
 	render();
+	music_update();
 
 	return WindowShouldClose();
 }
@@ -59,6 +61,7 @@ void uninit() {
 	destroy_world();
 	unload_textures();
 	unload_sounds();
+	unload_music();
 }
 
 void process_args(int argc, char* argv[]) {
