@@ -3,6 +3,7 @@
 #include "tick.h"
 #include "draw.h"
 #include "texture.h"
+#include "sound.h"
 #include "world.h"
 #include "entity.h"
 
@@ -27,13 +28,15 @@ void init() {
 	else
 		InitWindow(800, 600, "Willow's Whimsical World");
 
-	DisableCursor();
 	SetExitKey(KEY_NULL);
 
 	set_binds();
 	input.sensitivity = sensitivity;
 
 	load_textures();
+
+	InitAudioDevice();
+	load_sounds();
 
 	if (path[0] == '\0')
 		generate_world(size.x, size.y, size.z);
@@ -52,8 +55,10 @@ int loop() {
 }
 
 void uninit() {
+	CloseAudioDevice();
 	destroy_world();
 	unload_textures();
+	unload_sounds();
 }
 
 void process_args(int argc, char* argv[]) {
