@@ -56,7 +56,13 @@ void load_world(const char* path) {
 	world.data = malloc(sizeof(char) * world.w * world.h * world.l);
 
 	freopen(path, "r", file);
-	fscanf(file, "#WWF\n%*dx%*dx%*d\n%s", world.data);
+
+	int index, nl = 0;
+	for (index = 0; nl < 2; index++)
+		if (fgetc(file) == '\n') nl++;
+
+	for (int i = 0; i < world.w * world.h * world.l; i++)
+		world.data[i] = fgetc(file);
 
 	fclose(file);
 }

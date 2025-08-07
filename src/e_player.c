@@ -4,6 +4,7 @@
 #include "blocks.h"
 #include "menu.h"
 #include "sound.h"
+#include "music.h"
 
 #include <malloc.h>
 #include <raymath.h>
@@ -41,12 +42,13 @@ void E_PLAYER_INIT(Entity* this) {
 	update_menu(inventory_menu);
 
 	Menu* pause_menu = this->var[4];
-	*pause_menu = spawn_menu(5, "Pause");
+	*pause_menu = spawn_menu(6, "Pause");
 	set_menu_option(pause_menu, 0, "Resume");
 	set_menu_option(pause_menu, 1, "Save World");
 	set_menu_option(pause_menu, 2, "Load World");
-	set_menu_option(pause_menu, 3, "Fullscreen");
-	set_menu_option(pause_menu, 4, "Exit");
+	set_menu_option(pause_menu, 3, "Toggle Music");
+	set_menu_option(pause_menu, 4, "Fullscreen");
+	set_menu_option(pause_menu, 5, "Exit");
 	update_menu(pause_menu);
 
 	this->pos.x = world.w * 0.5;
@@ -69,6 +71,7 @@ void E_PLAYER_TICK(Entity* this) {
 	static int step_sound;
 	static float step_sound_timer;
 	static bool fullscreen;
+	static bool mute_music;
 
 	const float speed = 0.1;
 	const float jump_speed = 0.17;
@@ -195,6 +198,11 @@ void E_PLAYER_TICK(Entity* this) {
 				}
 				else if (pause_menu->option[3]) {
 					pause_menu->option[3] = false;
+					mute_music = !mute_music;
+					SetMusicVolume(music, !mute_music);
+				}
+				else if (pause_menu->option[4]) {
+					pause_menu->option[4] = false;
 					fullscreen = !fullscreen;
 					if (fullscreen) {
 						SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
@@ -207,8 +215,8 @@ void E_PLAYER_TICK(Entity* this) {
 					update_menu(pause_menu);
 					update_menu(inventory_menu);
 				}
-				else if (pause_menu->option[4]) {
-					pause_menu->option[4] = false;
+				else if (pause_menu->option[5]) {
+					pause_menu->option[5] = false;
 					PlaySound(sound[S_BUTTON]);
 					if (GetRandomValue(1, 69) == 1)
 						PlaySound(sound[S_FIDDLESTICKS]);
