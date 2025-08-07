@@ -13,12 +13,13 @@ Vector3 get_look_block(Camera3D);
 void place_block(Camera3D cam, int block);
 
 void E_PLAYER_INIT(Entity* this) {
-	this->data = malloc(sizeof(Camera3D) + sizeof(int) + sizeof(bool) + sizeof(Menu));
-	this->var = malloc(sizeof(void*) * 4);
+	this->data = malloc(sizeof(Camera3D) + sizeof(int) + sizeof(int) + sizeof(Menu) + sizeof(Menu));
+	this->var = malloc(sizeof(void*) * 5);
 	this->var[0] = this->data;
 	this->var[1] = this->data + sizeof(Camera3D);
 	this->var[2] = this->data + sizeof(Camera3D) + sizeof(int);
-	this->var[3] = this->data + sizeof(Camera3D) + sizeof(int) + sizeof(bool);
+	this->var[3] = this->data + sizeof(Camera3D) + sizeof(int) + sizeof(int);
+	this->var[4] = this->data + sizeof(Camera3D) + sizeof(int) + sizeof(int) + sizeof(Menu);
 
 	Camera3D* cam = this->var[0];
 	cam->projection = CAMERA_PERSPECTIVE;
@@ -30,17 +31,23 @@ void E_PLAYER_INIT(Entity* this) {
 	int* block = this->var[1];
 	*block = B_DIRT;
 
-	bool* in_menu = this->var[2];
-	*in_menu = false;
+	int* in_menu = this->var[2];
+	*in_menu = 0;
 
-	Menu* menu = this->var[3];
-	*menu = spawn_menu(5, "Pause");
-	set_menu_option(menu, 0, "Resume");
-	set_menu_option(menu, 1, "Save World");
-	set_menu_option(menu, 2, "Load World");
-	set_menu_option(menu, 3, "Fullscreen");
-	set_menu_option(menu, 4, "Exit");
-	update_menu(menu);
+	Menu* inventory_menu = this->var[3];
+	*inventory_menu = spawn_menu(BLOCK_TYPES, "Inventory");
+	for (int i = 0; i < BLOCK_TYPES; i++)
+		set_menu_option(inventory_menu, i, block_name[i]);
+	update_menu(inventory_menu);
+
+	Menu* pause_menu = this->var[4];
+	*pause_menu = spawn_menu(5, "Pause");
+	set_menu_option(pause_menu, 0, "Resume");
+	set_menu_option(pause_menu, 1, "Save World");
+	set_menu_option(pause_menu, 2, "Load World");
+	set_menu_option(pause_menu, 3, "Fullscreen");
+	set_menu_option(pause_menu, 4, "Exit");
+	update_menu(pause_menu);
 
 	this->pos.x = world.w * 0.5;
 	this->pos.z = world.l * 0.5;
@@ -71,8 +78,9 @@ void E_PLAYER_TICK(Entity* this) {
 
 	Camera3D* cam = this->var[0];
 	int* block = this->var[1];
-	bool* in_menu = this->var[2];
-	Menu* menu = this->var[3];
+	int* in_menu = this->var[2];
+	Menu* inventory_menu = this->var[3];
+	Menu* pause_menu = this->var[4];
 
 	Vector2 dir = get_movedir(*cam);
 	this->vel.x = dir.x * speed;
@@ -157,40 +165,55 @@ void E_PLAYER_TICK(Entity* this) {
 		}
 	}
 	else {
-		menu_tick(menu);
-		if (menu->option[0]) {
-			menu->option[0] = false;
-			*in_menu = false;
-		}
-		if (menu->option[1]) {
-			menu->option[1] = false;
-			save_world("world.wwf");
-			PlaySound(sound[S_DENY]);
-		}
-		if (menu->option[2]) {
-			menu->option[2] = false;
-			destroy_world();
-			load_world("world.wwf");
-			PlaySound(sound[S_DENY]);
-		}
-		if (menu->option[3]) {
-			menu->option[3] = false;
-			fullscreen = !fullscreen;
-			if (fullscreen) {
-				SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
-				ToggleFullscreen();
-			}
-			else {
-				ToggleFullscreen();
-				SetWindowSize(800, 600);
-			}
-			update_menu(menu);
-		}
-		if (menu->option[4]) {
-			menu->option[4] = false;
-			PlaySound(sound[S_BUTTON]);
-			if (GetRandomValue(1, 69) == 1)
-				PlaySound(sound[S_FIDDLESTICKS]);
+		switch (*in_menu) {
+			case 1:;
+				menu_tick(inventory_menu);
+				for (int i = 0; i < inventory_menu->options; i++) {
+					if (inventory_menu->option[i]) {
+						inventory_menu->option[i] = false;
+						*block = i;
+						break;
+					}
+				}
+				break;
+			case 2:
+				menu_tick(pause_menu);
+				if (pause_menu->option[0]) {
+					pause_menu->option[0] = false;
+					*in_menu = 0;
+				}
+				else if (pause_menu->option[1]) {
+					pause_menu->option[1] = false;
+					save_world("world.wwf");
+					PlaySound(sound[S_DENY]);
+				}
+				else if (pause_menu->option[2]) {
+					pause_menu->option[2] = false;
+					destroy_world();
+					load_world("world.wwf");
+					PlaySound(sound[S_DENY]);
+				}
+				else if (pause_menu->option[3]) {
+					pause_menu->option[3] = false;
+					fullscreen = !fullscreen;
+					if (fullscreen) {
+						SetWindowSize(GetMonitorWidth(GetCurrentMonitor()), GetMonitorHeight(GetCurrentMonitor()));
+						ToggleFullscreen();
+					}
+					else {
+						ToggleFullscreen();
+						SetWindowSize(800, 600);
+					}
+					update_menu(pause_menu);
+					update_menu(inventory_menu);
+				}
+				else if (pause_menu->option[4]) {
+					pause_menu->option[4] = false;
+					PlaySound(sound[S_BUTTON]);
+					if (GetRandomValue(1, 69) == 1)
+						PlaySound(sound[S_FIDDLESTICKS]);
+				}
+				break;
 		}
 	}
 
@@ -198,21 +221,11 @@ void E_PLAYER_TICK(Entity* this) {
 	cam->position = Vector3Add(cam->position, this->vel);
 	cam->target = Vector3Add(cam->target, this->vel);
 
-	if (input.nextslot && *block < B_STONE) {
-		input.nextslot = false;
-		*block += 1;
-		PlaySound(sound[S_SWITCH]);
-	}
-
-	if (input.prevslot && *block > B_DIRT)  {
-		input.prevslot = false;
-		*block -= 1;
-		PlaySound(sound[S_SWITCH]);
-	}
-
-	if (input.inventory) {
-		input.inventory = false;
-		*in_menu = !*in_menu;
+	if (input.inventory || input.pause) {
+		if (*in_menu) *in_menu = 0;
+		else if (input.inventory) *in_menu = 1;
+		else *in_menu = 2;
+		input.inventory = input.pause = false;
 		PlaySound(sound[S_MOVESELECT]);
 	}
 

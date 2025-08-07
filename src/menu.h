@@ -18,7 +18,7 @@ void set_menu_option(Menu* menu, int option, const char* name);
 void update_menu(Menu* menu);
 
 void menu_tick(Menu* menu);
-void menu_draw(Menu* menu);
+void menu_draw(Menu menu);
 
 void destroy_menu(Menu* menu);
 

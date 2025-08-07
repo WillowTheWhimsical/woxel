@@ -9,7 +9,7 @@
 #include <rlgl.h>
 
 void draw_block(float x, float y, float z, float width, float height, float length, int block, bool cull[6]) {
-	Texture* tex = &texture[block - 1];
+	Texture* tex = &texture[block];
 	Rectangle source = {0, 0, tex->width, tex->height};
 	float texWidth = (float)tex->width;
 	float texHeight = (float)tex->height;
@@ -111,14 +111,14 @@ void draw_world() {
 		for (int j = 0; j < world.h; j++) {
 			for (int i = 0; i < world.w; i++) {
 				int block = get_block(i, j, t);
-				if (block > B_AIR) {
+				if (block >= 0) {
 					bool cull[6] = {
-						get_block(i, j, t + 1) > B_AIR,
-						get_block(i, j, t - 1) > B_AIR,
-						get_block(i, j + 1, t) > B_AIR,
-						get_block(i, j - 1, t) > B_AIR,
-						get_block(i + 1, j, t) > B_AIR,
-						get_block(i - 1, j, t) > B_AIR,
+						get_block(i, j, t + 1) >= 0,
+						get_block(i, j, t - 1) >= 0,
+						get_block(i, j + 1, t) >= 0,
+						get_block(i, j - 1, t) >= 0,
+						get_block(i + 1, j, t) >= 0,
+						get_block(i - 1, j, t) >= 0,
 					};
 					draw_block(i, j, t, 1, 1, 1, block, cull);
 				}
@@ -130,18 +130,20 @@ void draw_world() {
 void render() {
 	Camera3D* cam = 0;
 	int* block = 0;
-	bool* in_menu = 0;
-	Menu* menu = 0;
+	int* in_menu = 0;
+	Menu* inventory_menu = 0;
+	Menu* pause_menu = 0;
 	for_entities(e)
 		if (e->type == E_PLAYER) {
 			cam = e->var[0];
 			block = e->var[1];
 			in_menu = e->var[2];
-			menu = e->var[3];
+			inventory_menu = e->var[3];
+			pause_menu = e->var[4];
 			break;
 		}
 	}
-	if (cam == 0 || block == 0 || menu == 0) return;
+	if (cam == 0 || block == 0 || inventory_menu == 0 || pause_menu == 0) return;
 
 	UpdateCameraPro(cam, (Vector3){0, 0, 0},
 		(Vector3){input.mdx * input.sensitivity * IsCursorHidden(),
@@ -155,7 +157,7 @@ void render() {
 			draw_world();
 		EndMode3D();
 
-		DrawTexturePro(texture[*block - 1], (Rectangle){0, 0, texture[*block - 1].width, texture[*block - 1].height}, (Rectangle){GetScreenWidth() - 32, 0, 32, 32}, (Vector2){0, 0}, 0, WHITE);
+		DrawTexturePro(texture[*block], (Rectangle){0, 0, texture[*block].width, texture[*block].height}, (Rectangle){GetScreenWidth() - 32, 0, 32, 32}, (Vector2){0, 0}, 0, WHITE);
 
 		if (!*in_menu) {
 			DisableCursor();
@@ -164,7 +166,14 @@ void render() {
 		}
 		else {
 			EnableCursor();
-			menu_draw(menu);
+			switch (*in_menu) {
+				case 1:
+					menu_draw(*inventory_menu);
+					break;
+				case 2:
+					menu_draw(*pause_menu);
+					break;
+			}
 		}
 
 		DrawFPS(0, 0);

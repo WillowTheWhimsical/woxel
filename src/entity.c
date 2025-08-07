@@ -51,56 +51,56 @@ void entity_collision(Entity* this) {
 	for (int i = 0; i <= (int)this->size.y; i++) {
 		if (
 			(vel.x < 0 && (
-			    get_block(this->pos.x + vel.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z) > B_AIR
-			 || get_block(this->pos.x + vel.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z) > B_AIR
+			    get_block(this->pos.x + vel.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z) >= 0
+			 || get_block(this->pos.x + vel.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z) >= 0
 			)) || (vel.x > 0 && (
-			    get_block(this->pos.x + vel.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z) > B_AIR
-			 || get_block(this->pos.x + vel.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z) > B_AIR
+			    get_block(this->pos.x + vel.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z) >= 0
+			 || get_block(this->pos.x + vel.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z) >= 0
 		  ))
 		) { this->vel.x = 0; break; }
 	}
 	if (
 		(vel.x < 0 && (
-		    get_block(this->pos.x + vel.x - this->size.x, this->pos.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x + vel.x - this->size.x, this->pos.y, this->pos.z + this->size.z) > B_AIR
+		    get_block(this->pos.x + vel.x - this->size.x, this->pos.y, this->pos.z - this->size.z) >= 0
+		 || get_block(this->pos.x + vel.x - this->size.x, this->pos.y, this->pos.z + this->size.z) >= 0
 		)) || (vel.x > 0 && (
-		    get_block(this->pos.x + vel.x + this->size.x, this->pos.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x + vel.x + this->size.x, this->pos.y, this->pos.z + this->size.z) > B_AIR
+		    get_block(this->pos.x + vel.x + this->size.x, this->pos.y, this->pos.z - this->size.z) >= 0
+		 || get_block(this->pos.x + vel.x + this->size.x, this->pos.y, this->pos.z + this->size.z) >= 0
 	  ))
 	) { this->vel.x = 0; }
 
 	for (int i = 0; i <= (int)this->size.y; i++) {
 		if (
 			(vel.z < 0 && (
-			    get_block(this->pos.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z + vel.z) > B_AIR
-			 || get_block(this->pos.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z + vel.z) > B_AIR
+			    get_block(this->pos.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z + vel.z) >= 0
+			 || get_block(this->pos.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z + vel.z) >= 0
 			)) || (vel.z > 0 && (
-			    get_block(this->pos.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z + vel.z) > B_AIR
-			 || get_block(this->pos.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z + vel.z) > B_AIR
+			    get_block(this->pos.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z + vel.z) >= 0
+			 || get_block(this->pos.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z + vel.z) >= 0
 			))
 		) { this->vel.z = 0; }
 	}
 	if (
 		(vel.z < 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y, this->pos.z - this->size.z + vel.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y, this->pos.z - this->size.z + vel.z) > B_AIR
+		    get_block(this->pos.x - this->size.x, this->pos.y, this->pos.z - this->size.z + vel.z) >= 0
+		 || get_block(this->pos.x + this->size.x, this->pos.y, this->pos.z - this->size.z + vel.z) >= 0
 		)) || (vel.z > 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y, this->pos.z + this->size.z + vel.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y, this->pos.z + this->size.z + vel.z) > B_AIR
+		    get_block(this->pos.x - this->size.x, this->pos.y, this->pos.z + this->size.z + vel.z) >= 0
+		 || get_block(this->pos.x + this->size.x, this->pos.y, this->pos.z + this->size.z + vel.z) >= 0
 		))
 	) { this->vel.z = 0; }
 
 	if (
 		(vel.y < 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y + vel.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x - this->size.x, this->pos.y + vel.y, this->pos.z + this->size.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y, this->pos.z + this->size.z) > B_AIR
+		    get_block(this->pos.x - this->size.x, this->pos.y + vel.y, this->pos.z - this->size.z) >= 0
+		 || get_block(this->pos.x - this->size.x, this->pos.y + vel.y, this->pos.z + this->size.z) >= 0
+		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y, this->pos.z - this->size.z) >= 0
+		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y, this->pos.z + this->size.z) >= 0
 		)) || (vel.y > 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x - this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z + this->size.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z + this->size.z) > B_AIR
+		    get_block(this->pos.x - this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z - this->size.z) >= 0
+		 || get_block(this->pos.x - this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z + this->size.z) >= 0
+		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z - this->size.z) >= 0
+		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z + this->size.z) >= 0
 		))
 	) { this->vel.y = 0; }
 }

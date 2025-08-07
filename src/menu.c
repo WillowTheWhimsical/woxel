@@ -86,19 +86,19 @@ void menu_tick(Menu* menu) {
 	}
 }
 
-void menu_draw(Menu* menu) {
+void menu_draw(Menu menu) {
 	const int fontsize = 20;
 	const int fontsize_title = fontsize * 1.5;
 
-	draw_box(menu->main_box, false);
-	DrawText(menu->title, GetScreenWidth() * 0.5 - MeasureText(menu->title, fontsize_title) * 0.5, menu->main_box.y - fontsize_title, fontsize_title, WHITE);
+	draw_box(menu.main_box, false);
+	DrawText(menu.title, GetScreenWidth() * 0.5 - MeasureText(menu.title, fontsize_title) * 0.5, menu.main_box.y - fontsize_title, fontsize_title, WHITE);
 
-	for (int i = 0; i < menu->options; i++) {
-		draw_box(menu->option_box[i], menu->select == i && input.mconfirm);
-		DrawText(menu->option_name[i], menu->option_box[i].x + 3, menu->option_box[i].y + 1, fontsize, WHITE);
+	for (int i = 0; i < menu.options; i++) {
+		draw_box(menu.option_box[i], menu.select == i && input.mconfirm);
+		DrawText(menu.option_name[i], menu.option_box[i].x + 3, menu.option_box[i].y + 1, fontsize, WHITE);
 	}
 
-	DrawText(">", menu->option_box[menu->select].x - fontsize * 0.5, menu->option_box[menu->select].y, fontsize, YELLOW);
+	DrawText(">", menu.option_box[menu.select].x - fontsize * 0.5, menu.option_box[menu.select].y, fontsize, YELLOW);
 }
 
 void destroy_menu(Menu* menu) {
