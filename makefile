@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -g
-LDFLAGS = -lm -lraylib
+CFLAGS = -Wall -O3
+LDFLAGS = -lm -lwif -lraylib
 
 obj = .build/main.o .build/game.o .build/input.o .build/tick.o .build/draw.o .build/world.o .build/blocks.o .build/menu.o .build/texture.o .build/sound.o .build/music.o .build/entity.o .build/e_player.o
 target = woxel
