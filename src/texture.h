@@ -9,6 +9,16 @@ enum Textures {
 	T_DIRT,
 	T_GRASS,
 	T_STONE,
+	T_WOOD,
+	T_RED,
+	T_ORANGE,
+	T_YELLOW,
+	T_GREEN,
+	T_CYAN,
+	T_BLUE,
+	T_PURPLE,
+	T_MAGENTA,
+	T_PSB,
 
 	TEXTURES
 };

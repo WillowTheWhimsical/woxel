@@ -3,5 +3,15 @@
 const char* block_name[] = {
 	"dirt",
 	"grass",
-	"stone"
+	"stone",
+	"wood",
+	"red",
+	"orange",
+	"yellow",
+	"green",
+	"cyan",
+	"blue",
+	"purple",
+	"magenta",
+	"PSB"
 };
