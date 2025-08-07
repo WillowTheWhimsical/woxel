@@ -78,12 +78,12 @@ void E_PLAYER_TICK(Entity* this) {
 	this->vel.x = dir.x * speed;
 	this->vel.z = dir.y * speed;
 
-	if (input.crouch) {
-		this->vel.x *= 0.5;
-		this->vel.z *= 0.5;
-	}
-
 	if (!flying) {
+		if (input.crouch) {
+			this->vel.x *= 0.5;
+			this->vel.z *= 0.5;
+		}
+
 		if (this->vel.y > terminal_vel)
 			this->vel.y -= gravity;
 
