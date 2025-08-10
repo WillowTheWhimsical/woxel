@@ -7,7 +7,7 @@ extern Texture* texture;
 
 enum Textures {
 	T_DIRT,
-	T_GRASS,
+	T_GRASS, T_GRASS_TOP,
 	T_STONE,
 	T_WOOD,
 	T_RED,
@@ -22,6 +22,8 @@ enum Textures {
 
 	TEXTURES
 };
+
+extern const char* texture_name[];
 
 void load_textures();
 void unload_textures();

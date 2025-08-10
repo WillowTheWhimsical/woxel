@@ -1,8 +1,23 @@
 #include "texture.h"
-#include "blocks.h"
 
 #include <libwif.h>
 #include <malloc.h>
+
+const char* texture_name[] = {
+	"dirt",
+	"grass", "grass_top",
+	"stone",
+	"wood",
+	"red",
+	"orange",
+	"yellow",
+	"green",
+	"cyan",
+	"blue",
+	"purple",
+	"magenta",
+	"psb"
+};
 
 Texture* texture;
 
@@ -24,7 +39,7 @@ void load_textures() {
 		Image image;
 		wif_image wif;
 
-		wif_parsef(&wif, TextFormat("res/img/%s.wif", block_name[i]));
+		wif_parsef(&wif, TextFormat("res/img/%s.wif", texture_name[i]));
 		image = convert_wif(wif);
 		texture[i] = LoadTextureFromImage(image);
 

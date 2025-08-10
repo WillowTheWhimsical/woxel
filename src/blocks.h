@@ -16,6 +16,7 @@ enum BLOCK_TYPES {
 	B_PURPLE,
 	B_MAGENTA,
 	B_PSB,
+	B_TEST,
 
 	BLOCK_TYPES
 };

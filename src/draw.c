@@ -7,88 +7,104 @@
 
 #include <rlgl.h>
 
-void draw_block(float x, float y, float z, float width, float height, float length, int block, bool cull[6]) {
-	Texture* tex = &texture[block];
-	Rectangle source = {0, 0, tex->width, tex->height};
-	float texWidth = (float)tex->width;
-	float texHeight = (float)tex->height;
+const int block_face_tex[][6] = {
+	{T_DIRT, T_DIRT, T_DIRT, T_DIRT, T_DIRT, T_DIRT},
+	{T_GRASS, T_GRASS, T_GRASS_TOP, T_DIRT, T_GRASS, T_GRASS},
+	{T_STONE, T_STONE, T_STONE, T_STONE, T_STONE, T_STONE},
+	{T_WOOD, T_WOOD, T_WOOD, T_WOOD, T_WOOD, T_WOOD},
+	{T_RED, T_RED, T_RED, T_RED, T_RED, T_RED},
+	{T_ORANGE, T_ORANGE, T_ORANGE, T_ORANGE, T_ORANGE, T_ORANGE},
+	{T_YELLOW, T_YELLOW, T_YELLOW, T_YELLOW, T_YELLOW, T_YELLOW},
+	{T_GREEN, T_GREEN, T_GREEN, T_GREEN, T_GREEN, T_GREEN},
+	{T_CYAN, T_CYAN, T_CYAN, T_CYAN, T_CYAN, T_CYAN},
+	{T_BLUE, T_BLUE, T_BLUE, T_BLUE, T_BLUE, T_BLUE},
+	{T_PURPLE, T_PURPLE, T_PURPLE, T_PURPLE, T_PURPLE, T_PURPLE},
+	{T_MAGENTA, T_MAGENTA, T_MAGENTA, T_MAGENTA, T_MAGENTA, T_MAGENTA},
+	{T_PSB, T_PSB, T_PSB, T_PSB, T_PSB, T_PSB},
+	{T_RED, T_YELLOW, T_GREEN, T_BLUE, T_PURPLE, T_MAGENTA}
+};
 
-	rlSetTexture(tex->id);
-
+void draw_block(float x, float y, float z, float w, float h, float l, int block_id, bool cull_face[6]) {
 	rlBegin(RL_QUADS);
 	rlColor4ub(255, 255, 255, 255);
 
-	if (!cull[0]) {
+	if (!cull_face[0]) {
+		rlSetTexture(texture[block_face_tex[block_id][0]].id);
 		rlNormal3f(0.0f, 0.0f, 1.0f);
-		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x, y, z + length);
-		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x + width, y, z + length);
-		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-		rlVertex3f(x + width, y + height, z + length);
-		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-		rlVertex3f(x, y + height, z + length);
+		rlTexCoord2f(0, 1);
+		rlVertex3f(x, y, z + l);
+		rlTexCoord2f(1, 1);
+		rlVertex3f(x + w, y, z + l);
+		rlTexCoord2f(1, 0);
+		rlVertex3f(x + w, y + h, z + l);
+		rlTexCoord2f(0, 0);
+		rlVertex3f(x, y + h, z + l);
 	}
 
-	if (!cull[1]) {
+	if (!cull_face[1]) {
+		rlSetTexture(texture[block_face_tex[block_id][1]].id);
 		rlNormal3f(0.0f, 0.0f, -1.0f);
-		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
+		rlTexCoord2f(1, 1);
 		rlVertex3f(x, y, z);
-		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-		rlVertex3f(x, y + height, z);
-		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-		rlVertex3f(x + width, y + height, z);
-		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x + width, y, z);
+		rlTexCoord2f(1, 0);
+		rlVertex3f(x, y + h, z);
+		rlTexCoord2f(0, 0);
+		rlVertex3f(x + w, y + h, z);
+		rlTexCoord2f(0, 1);
+		rlVertex3f(x + w, y, z);
 	}
 
-	if (!cull[2]) {
+	if (!cull_face[2]) {
+		rlSetTexture(texture[block_face_tex[block_id][2]].id);
 		rlNormal3f(0.0f, 1.0f, 0.0f);
-		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-		rlVertex3f(x, y + height, z);
-		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x, y + height, z + length);
-		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x + width, y + height, z + length);
-		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-		rlVertex3f(x + width, y + height, z);
+		rlTexCoord2f(0, 0);
+		rlVertex3f(x, y + h, z);
+		rlTexCoord2f(0, 1);
+		rlVertex3f(x, y + h, z + l);
+		rlTexCoord2f(1, 1);
+		rlVertex3f(x + w, y + h, z + l);
+		rlTexCoord2f(1, 0);
+		rlVertex3f(x + w, y + h, z);
 	}
 
-	if (!cull[3]) {
+	if (!cull_face[3]) {
+		rlSetTexture(texture[block_face_tex[block_id][3]].id);
 		rlNormal3f(0.0f, -1.0f, 0.0f);
-		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
+		rlTexCoord2f(1, 0);
 		rlVertex3f(x, y, z);
-		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-		rlVertex3f(x + width, y, z);
-		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x + width, y, z + length);
-		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x, y, z + length);
+		rlTexCoord2f(0, 0);
+		rlVertex3f(x + w, y, z);
+		rlTexCoord2f(0, 1);
+		rlVertex3f(x + w, y, z + l);
+		rlTexCoord2f(1, 1);
+		rlVertex3f(x, y, z + l);
 	}
 
-	if (!cull[4]) {
+	if (!cull_face[4]) {
+		rlSetTexture(texture[block_face_tex[block_id][4]].id);
 		rlNormal3f(1.0f, 0.0f, 0.0f);
-		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x + width, y, z);
-		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-		rlVertex3f(x + width, y + height, z);
-		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-		rlVertex3f(x + width, y + height, z + length);
-		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x + width, y, z + length);
+		rlTexCoord2f(1, 1);
+		rlVertex3f(x + w, y, z);
+		rlTexCoord2f(1, 0);
+		rlVertex3f(x + w, y + h, z);
+		rlTexCoord2f(0, 0);
+		rlVertex3f(x + w, y + h, z + l);
+		rlTexCoord2f(0, 1);
+		rlVertex3f(x + w, y, z + l);
 	}
 
 
-	if (!cull[5]) {
+	if (!cull_face[5]) {
+		rlSetTexture(texture[block_face_tex[block_id][5]].id);
 		rlNormal3f(-1.0f, 0.0f, 0.0f);
-		rlTexCoord2f(source.x / texWidth, (source.y + source.height) / texHeight);
+		rlTexCoord2f(0, 1);
 		rlVertex3f(x, y, z);
-		rlTexCoord2f((source.x + source.width) / texWidth, (source.y + source.height) / texHeight);
-		rlVertex3f(x, y, z + length);
-		rlTexCoord2f((source.x + source.width) / texWidth, source.y / texHeight);
-		rlVertex3f(x, y + height, z + length);
-		rlTexCoord2f(source.x / texWidth, source.y / texHeight);
-		rlVertex3f(x, y + height, z);
+		rlTexCoord2f(1, 1);
+		rlVertex3f(x, y, z + l);
+		rlTexCoord2f(1, 0);
+		rlVertex3f(x, y + h, z + l);
+		rlTexCoord2f(0, 0);
+		rlVertex3f(x, y + h, z);
 	}
 
 	rlEnd();
@@ -106,20 +122,20 @@ void draw_titlescreen() {
 }
 
 void draw_world() {
-	for (int t = 0; t < world.l; t++) {
-		for (int j = 0; j < world.h; j++) {
-			for (int i = 0; i < world.w; i++) {
-				int block = get_block(i, j, t);
+	for (int z = 0; z < world.l; z++) {
+		for (int y = 0; y < world.h; y++) {
+			for (int x = 0; x < world.w; x++) {
+				int block = get_block(x, y, z);
 				if (block >= 0) {
 					bool cull[6] = {
-						get_block(i, j, t + 1) >= 0,
-						get_block(i, j, t - 1) >= 0,
-						get_block(i, j + 1, t) >= 0,
-						get_block(i, j - 1, t) >= 0,
-						get_block(i + 1, j, t) >= 0,
-						get_block(i - 1, j, t) >= 0,
+						get_block(x, y, z + 1) >= 0,
+						get_block(x, y, z - 1) >= 0,
+						get_block(x, y + 1, z) >= 0,
+						get_block(x, y - 1, z) >= 0,
+						get_block(x + 1, y, z) >= 0,
+						get_block(x - 1, y, z) >= 0,
 					};
-					draw_block(i, j, t, 1, 1, 1, block, cull);
+					draw_block(x, y, z, 1, 1, 1, block, cull);
 				}
 			}
 		}
@@ -156,7 +172,7 @@ void render() {
 			draw_world();
 		EndMode3D();
 
-		DrawTexturePro(texture[*block], (Rectangle){0, 0, texture[*block].width, texture[*block].height}, (Rectangle){GetScreenWidth() - 32, 0, 32, 32}, (Vector2){0, 0}, 0, WHITE);
+		DrawTexturePro(texture[block_face_tex[*block][0]], (Rectangle){0, 0, texture[*block].width, texture[*block].height}, (Rectangle){GetScreenWidth() - 32, 0, 32, 32}, (Vector2){0, 0}, 0, WHITE);
 
 		if (!*in_menu) {
 			DisableCursor();
