@@ -19,6 +19,7 @@ enum Textures {
 	T_PURPLE,
 	T_MAGENTA,
 	T_PSB,
+	T_GOOBERT,
 
 	TEXTURES
 };

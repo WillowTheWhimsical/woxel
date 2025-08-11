@@ -10,9 +10,9 @@
 #define entity_tick(entity) ENTITY_TICK[entity->type](entity);
 
 typedef struct Entity {
-	int id;
-	int type;
+	int id, type, tex, frame, *frames, anims;
 	Vector3 pos, vel, size;
+	Vector2 dir, frame_size;
 	void* data;
 	void** var;
 } Entity;

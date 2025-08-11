@@ -14,6 +14,7 @@ Vector3 get_look_block(Camera3D);
 void place_block(Camera3D cam, int block);
 
 void E_PLAYER_INIT(Entity* this) {
+	this->tex = -1;
 	this->data = malloc(sizeof(Camera3D) + sizeof(int) + sizeof(int) + sizeof(Menu) + sizeof(Menu));
 	this->var = malloc(sizeof(void*) * 5);
 	this->var[0] = this->data;

@@ -4,6 +4,7 @@
 enum ENTITY_TYPES {
 	E_NULL,
 	E_PLAYER,
+	E_GOOBERT,
 
 	ENTITY_TYPES
 };

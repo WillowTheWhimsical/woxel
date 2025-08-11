@@ -16,7 +16,8 @@ const char* texture_name[] = {
 	"blue",
 	"purple",
 	"magenta",
-	"psb"
+	"psb",
+	"goobert"
 };
 
 Texture* texture;

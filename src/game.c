@@ -45,6 +45,7 @@ void init() {
 		load_world(path);
 
 	spawn_entity(E_PLAYER);
+	spawn_entity(E_GOOBERT)->pos = (Vector3){world.w * 0.5, 24, world.h * 0.5};
 }
 
 int loop() {
