@@ -6,8 +6,8 @@
 #include <raylib.h>
 
 #define for_entities(e) for (int i = 0; i < entities; i++) { Entity* e = &entity[i];
-#define entity_init(entity) ENTITY_INIT[entity->type](entity);
-#define entity_tick(entity) ENTITY_TICK[entity->type](entity);
+#define entity_init(e) ENTITY_INIT[e->type](e);
+#define entity_tick(e) ENTITY_TICK[e->type](e);
 
 typedef struct Entity {
 	int id, type, tex, frame, *frames, anims;

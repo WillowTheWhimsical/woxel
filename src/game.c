@@ -1,4 +1,5 @@
 #include "game.h"
+#include "client.h"
 #include "input.h"
 #include "tick.h"
 #include "draw.h"
@@ -8,6 +9,7 @@
 #include "world.h"
 #include "entity.h"
 
+#include <raylib.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +20,8 @@ char path[256] = {'\0'};
 Vector3 size = {32, 32, 32};
 
 void init() {
+	client_join("127.0.0.1", 42069);
+
 	SetTraceLogLevel(LOG_WARNING);
 	
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -28,6 +32,8 @@ void init() {
 	}
 	else
 		InitWindow(800, 600, "Willow's Whimsical World");
+
+	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
 	SetExitKey(KEY_NULL);
 
@@ -53,11 +59,13 @@ int loop() {
 	tick();
 	render();
 	music_update();
+	client_update();
 
 	return WindowShouldClose();
 }
 
 void uninit() {
+	client_leave();
 	CloseAudioDevice();
 	destroy_world();
 	unload_textures();

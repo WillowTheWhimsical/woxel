@@ -1,4 +1,5 @@
 #include "entity.h"
+#include "client.h"
 #include "input.h"
 #include "world.h"
 #include "blocks.h"
@@ -6,6 +7,7 @@
 #include "sound.h"
 #include "music.h"
 
+#include <enet/enet.h>
 #include <malloc.h>
 #include <raymath.h>
 
@@ -161,6 +163,10 @@ void E_PLAYER_TICK(Entity* this) {
 			if (v.x != 0 || v.y != 0 || v.z != 0) {
 				set_block(v.x, v.y, v.z, B_AIR);
 				PlaySound(sound[S_TICK]);
+
+				char packet_data[64];
+				sprintf(packet_data, "set %d %d %d %d", (int)v.x, (int)v.y, (int)v.z, B_AIR);
+				client_send(packet_data);
 			}
 		}
 		if (input.use) {
@@ -243,6 +249,10 @@ void E_PLAYER_TICK(Entity* this) {
 		flying = !flying;
 		PlaySound(sound[S_DENY]);
 	}
+
+	char packet_data[64];
+	sprintf(packet_data, "pos %f %f %f %d", this->pos.x, this->pos.y, this->pos.z, client_getid());
+	client_send(packet_data);
 }
 
 void __attribute__((constructor)) _construct_player() {
@@ -298,6 +308,10 @@ void place_block(Camera3D cam, int block) {
 			z = cam.position.z + dir.z * (i - 0.1);
 			set_block(x, y, z, block);
 			PlaySound(sound[S_TICK]);
+
+			char packet_data[64];
+			sprintf(packet_data, "set %f %f %f %d", (float)x, (float)y, (float)z, block);
+			client_send(packet_data);
 			return;
 		}
 	}
