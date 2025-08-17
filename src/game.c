@@ -8,6 +8,7 @@
 #include "world.h"
 #include "entity.h"
 
+#include <raylib.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +29,8 @@ void init() {
 	}
 	else
 		InitWindow(800, 600, "Willow's Whimsical World");
+
+	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
 	SetExitKey(KEY_NULL);
 
