@@ -18,9 +18,11 @@ bool fullscreen = false;
 float sensitivity = 0.25;
 char path[256] = {'\0'};
 Vector3 size = {32, 32, 32};
+char* hostname;
+int port = 42069;
 
 void init() {
-	client_join("127.0.0.1", 42069);
+	client_join(hostname, port);
 
 	SetTraceLogLevel(LOG_WARNING);
 	
@@ -74,8 +76,10 @@ void uninit() {
 }
 
 void process_args(int argc, char* argv[]) {
+	hostname = malloc(sizeof(char) * (strlen("localhost") + 1));
+	strcpy(hostname, "localhost");
 	int opt;
-	while ((opt = getopt(argc, argv, "fs:o:w:h:l:")) != -1) {
+	while ((opt = getopt(argc, argv, "fs:o:h:p:")) != -1) {
 		switch (opt) {
 			case 'f':
 				fullscreen = true;
@@ -86,14 +90,12 @@ void process_args(int argc, char* argv[]) {
 			case 'o':
 				strncpy(path, optarg, 255);
 				break;
-			case 'w':
-				size.x = atoi(optarg);
-				break;
 			case 'h':
-				size.y = atoi(optarg);
+				hostname = realloc(hostname, sizeof(char) * (strlen(optarg) + 1));
+				strcpy(hostname, optarg);
 				break;
-			case 'l':
-				size.z = atoi(optarg);
+			case 'p':
+				port = atoi(optarg);
 				break;
 		}
 	}

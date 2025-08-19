@@ -310,7 +310,7 @@ void place_block(Camera3D cam, int block) {
 			PlaySound(sound[S_TICK]);
 
 			char packet_data[64];
-			sprintf(packet_data, "set %f %f %f %d", (float)x, (float)y, (float)z, block);
+			sprintf(packet_data, "set %d %d %d %d", x, y, z, block);
 			client_send(packet_data);
 			return;
 		}

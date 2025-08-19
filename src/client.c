@@ -38,8 +38,6 @@ void client_update() {
 				printf("Left server\n");
 				break;
 			case ENET_EVENT_TYPE_RECEIVE:;
-				// printf("Event `%s` from server\n", event.packet->data);
-
 				float x, y, z;
 				int id;
 				if (sscanf((char*)event.packet->data, "new %d", &id) == 1) {

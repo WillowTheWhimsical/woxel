@@ -14,7 +14,7 @@ $(obj): .build/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 server:
-	$(CC) $(CFLAGS) src/server.c -lenet -o $(target)-server
+	$(CC) $(CFLAGS) src/server.c src/world.c -lenet -o $(target)-server
 
 setup:
 	mkdir -p .build

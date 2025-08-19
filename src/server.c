@@ -1,13 +1,23 @@
 #include "server.h"
 
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 #define ENET_IMPLEMENTATION
 #include <enet/enet.h>
+
+typedef struct {
+	int x, y, z, id;
+} Diff;
+Diff* diff;
+int diffs;
 
 ENetAddress address;
 ENetHost* host;
 
 void server_start(int max_clients) {
+	diffs = 0;
+
 	enet_initialize();
 
 	address = (ENetAddress){ENET_HOST_ANY, PORT};
@@ -22,20 +32,30 @@ void server_update() {
 		switch (event.type) {
 			case ENET_EVENT_TYPE_CONNECT:
 				printf("Client connected %d\n", event.peer->connectID);
+				for (int i = 0; i < diffs; i++) {
+					char packet_data[64];
+					sprintf(packet_data, "set %d %d %d %d", diff[i].x, diff[i].y, diff[i].z, diff[i].id);
+					printf("client set %d %d %d %d\n", diff[i].x, diff[i].y, diff[i].z, diff[i].id);
+					ENetPacket* packet = enet_packet_create(packet_data, strlen(packet_data), ENET_PACKET_FLAG_RELIABLE);
+					if (enet_peer_send(event.peer, 0, packet) < 0)
+						enet_packet_destroy(packet);
+				}
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
-				printf("Client disconnected %d\n", event.peer->connectID);
+				printf("Client disconnected\n");
 				break;
-			case ENET_EVENT_TYPE_RECEIVE:
-				printf("Event `%s` from client %d\n", event.packet->data, event.peer->connectID);
-
-				float x, y, z;
+			case ENET_EVENT_TYPE_RECEIVE:;
+				int ix, iy, iz;
+				float fx, fy, fz;
 				int id;
-				if (sscanf((char*)event.packet->data, "pos %f %f %f %d", &x, &y, &z, &id) == 4) {
-					printf("update pos %f %f %f for %d\n", x, y, z, id);
+				if (sscanf((char*)event.packet->data, "pos %f %f %f %d", &fx, &fy, &fz, &id) == 4) {
+					// printf("update pos %f %f %f for %d\n", fx, fy, fz, id);
 				}
-				else if (sscanf((char*)event.packet->data, "set %f %f %f %d", &x, &y, &z, &id) == 4) {
-					printf("set block %d %d %d with %d\n", (int)x, (int)y, (int)z, id);
+				else if (sscanf((char*)event.packet->data, "set %d %d %d %d", &ix, &iy, &iz, &id) == 4) {
+					printf("set block %d %d %d with %d\n", ix, iy, iz, id);
+					diff = realloc(diff, sizeof(Diff) * (diffs + 1));
+					diff[diffs] = (Diff){ix, iy, iz, id};
+					diffs++;
 				}
 
 				enet_host_broadcast(host, 0, event.packet);
@@ -47,11 +67,24 @@ void server_update() {
 }
 
 void server_stop() {
+	free(diff);
 	enet_host_destroy(host);
 }
 
 int main(int argc, char* argv[]) {
-	server_start(2);
+	int max_clients = 2;
+
+	int opt = 0;
+	while ((opt = getopt(argc, argv, "c:") != -1)) {
+		switch (opt) {
+			case 'c':
+				if (atoi(optarg) > 0)
+					max_clients = atoi(optarg);
+				break;
+		}
+	}
+
+	server_start(max_clients);
 	while (1) server_update();
 	server_stop();
 	return 0;
