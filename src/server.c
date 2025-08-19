@@ -32,10 +32,15 @@ void server_update() {
 		switch (event.type) {
 			case ENET_EVENT_TYPE_CONNECT:
 				printf("Client connected %d\n", event.peer->connectID);
+				char packet_data[64];
 				for (int i = 0; i < diffs; i++) {
-					char packet_data[64];
 					sprintf(packet_data, "set %d %d %d %d", diff[i].x, diff[i].y, diff[i].z, diff[i].id);
-					printf("client set %d %d %d %d\n", diff[i].x, diff[i].y, diff[i].z, diff[i].id);
+					ENetPacket* packet = enet_packet_create(packet_data, strlen(packet_data), ENET_PACKET_FLAG_RELIABLE);
+					if (enet_peer_send(event.peer, 0, packet) < 0)
+						enet_packet_destroy(packet);
+				}
+				for (int i = 0; i < host->peerCount; i++) {
+					sprintf(packet_data, "new %d", host->peers[i].connectID);
 					ENetPacket* packet = enet_packet_create(packet_data, strlen(packet_data), ENET_PACKET_FLAG_RELIABLE);
 					if (enet_peer_send(event.peer, 0, packet) < 0)
 						enet_packet_destroy(packet);

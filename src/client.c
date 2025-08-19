@@ -29,10 +29,7 @@ void client_update() {
 		switch (event.type) {
 			case ENET_EVENT_TYPE_CONNECT:
 				printf("Joined server\n");
-				char packet_data[64];
-				sprintf(packet_data, "new %d", event.peer->connectID);
-				printf("Sending id %d\n", event.peer->connectID);
-				client_send(packet_data);
+				client_send(TextFormat("new %d", event.peer->connectID));
 				break;
 			case ENET_EVENT_TYPE_DISCONNECT:
 				printf("Left server\n");
@@ -41,16 +38,22 @@ void client_update() {
 				float x, y, z;
 				int id;
 				if (sscanf((char*)event.packet->data, "new %d", &id) == 1) {
-					Entity* e = spawn_entity(E_PUPPET);
-					*(unsigned int*)e->var[0] = event.peer->connectID;
-					printf("Client joined server %d\n", id);
+					if (id != client_getid()) {
+						Entity* e = spawn_entity(E_PUPPET);
+						*(unsigned int*)e->var[0] = id;
+						printf("Client joined server %d\n", id);
+					}
 				}
 				else if (sscanf((char*)event.packet->data, "pos %f %f %f %d", &x, &y, &z, &id) == 4) {
 					for_entities(e)
-						if (e->type == E_PUPPET && *(unsigned int*)e->var[0] == id) {
+						if (e->type == E_PUPPET && *(unsigned int*)e->var[0] == id)
 							e->pos = (Vector3){x, y, z};
-							break;
-						}
+					}
+				}
+				else if (sscanf((char*)event.packet->data, "dir %f %f %d", &x, &y, &id) == 3) {
+					for_entities(e)
+						if (e->type == E_PUPPET && *(unsigned int*)e->var[0] == id)
+							e->dir = (Vector2){x, y};
 					}
 				}
 				else if (sscanf((char*)event.packet->data, "set %f %f %f %d", &x, &y, &z, &id) == 4) {

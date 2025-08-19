@@ -17,16 +17,7 @@ void E_PUPPET_INIT(Entity* this) {
 }
 
 void E_PUPPET_TICK(Entity* this) {
-	int* id = this->var[0];
 
-	static int timer = 0;
-
-	if (timer >= 60) {
-		printf("%d (%f, %f, %f)\n", *id, this->pos.x, this->pos.y, this->pos.z);
-		timer = 0;
-	}
-
-	timer++;
 }
 
 void __attribute__((constructor)) _construct_puppet() {

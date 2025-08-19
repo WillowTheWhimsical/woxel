@@ -9,6 +9,7 @@
 
 #include <enet/enet.h>
 #include <malloc.h>
+#include <raylib.h>
 #include <raymath.h>
 
 Vector2 get_movedir(Camera3D);
@@ -163,10 +164,7 @@ void E_PLAYER_TICK(Entity* this) {
 			if (v.x != 0 || v.y != 0 || v.z != 0) {
 				set_block(v.x, v.y, v.z, B_AIR);
 				PlaySound(sound[S_TICK]);
-
-				char packet_data[64];
-				sprintf(packet_data, "set %d %d %d %d", (int)v.x, (int)v.y, (int)v.z, B_AIR);
-				client_send(packet_data);
+				client_send(TextFormat("set %d %d %d %d", (int)v.x, (int)v.y, (int)v.z, B_AIR));
 			}
 		}
 		if (input.use) {
@@ -250,9 +248,10 @@ void E_PLAYER_TICK(Entity* this) {
 		PlaySound(sound[S_DENY]);
 	}
 
-	char packet_data[64];
-	sprintf(packet_data, "pos %f %f %f %d", this->pos.x, this->pos.y, this->pos.z, client_getid());
-	client_send(packet_data);
+	client_send(TextFormat("pos %f %f %f %d", this->pos.x, this->pos.y, this->pos.z, client_getid()));
+
+	Vector2 lookdir = Vector2Normalize((Vector2){cam->target.x - cam->position.x, cam->target.z - cam->position.z});
+	client_send(TextFormat("dir %f %f %d", lookdir.x, lookdir.y, client_getid()));
 }
 
 void __attribute__((constructor)) _construct_player() {
@@ -308,10 +307,7 @@ void place_block(Camera3D cam, int block) {
 			z = cam.position.z + dir.z * (i - 0.1);
 			set_block(x, y, z, block);
 			PlaySound(sound[S_TICK]);
-
-			char packet_data[64];
-			sprintf(packet_data, "set %d %d %d %d", x, y, z, block);
-			client_send(packet_data);
+			client_send(TextFormat("set %d %d %d %d", x, y, z, block));
 			return;
 		}
 	}
