@@ -2,6 +2,7 @@
 
 #include <libwif.h>
 #include <malloc.h>
+#include <raylib.h>
 
 const char* texture_name[] = {
 	"dirt",
@@ -28,6 +29,8 @@ Image convert_wif(wif_image wif) {
 		for (int x = 0; x < wif.width; x++) {
 			int windex = (x + y * wif.width) * 3;
 			Color color = {wif.data[windex], wif.data[windex + 1], wif.data[windex + 2], 255};
+			if (color.r == 111 && color.g == 109 && color.b == 81)
+				color = (Color){0, 0, 0, 0};
 			ImageDrawPixel(&image, x, y, color);
 		}
 	}
