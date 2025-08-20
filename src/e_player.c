@@ -7,7 +7,6 @@
 #include "sound.h"
 #include "music.h"
 
-#include <enet/enet.h>
 #include <malloc.h>
 #include <raylib.h>
 #include <raymath.h>
