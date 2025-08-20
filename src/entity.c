@@ -1,6 +1,7 @@
 #include "entity.h"
 #include "world.h"
 
+#include <raylib.h>
 #include <malloc.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -46,60 +47,60 @@ void smite_entity(int id) {
 }
 
 void entity_collision(Entity* this) {
-	Vector3 vel = this->vel;
-	for (int i = 0; i <= (int)this->size.y; i++) {
+	Vector3 vel = (Vector3){this->vel_x, this->vel_y, this->vel_z};
+	for (int i = 0; i <= (int)this->size_y; i++) {
 		if (
 			(vel.x < 0 && (
-			    get_block(this->pos.x + vel.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z) >= 0
-			 || get_block(this->pos.x + vel.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z) >= 0
+			    get_block(this->pos_x + vel.x - this->size_x, this->pos_y + this->size_y - i, this->pos_z - this->size_z) >= 0
+			 || get_block(this->pos_x + vel.x - this->size_x, this->pos_y + this->size_y - i, this->pos_z + this->size_z) >= 0
 			)) || (vel.x > 0 && (
-			    get_block(this->pos.x + vel.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z) >= 0
-			 || get_block(this->pos.x + vel.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z) >= 0
+			    get_block(this->pos_x + vel.x + this->size_x, this->pos_y + this->size_y - i, this->pos_z - this->size_z) >= 0
+			 || get_block(this->pos_x + vel.x + this->size_x, this->pos_y + this->size_y - i, this->pos_z + this->size_z) >= 0
 		  ))
-		) { this->vel.x = 0; break; }
+		) { this->vel_x = 0; break; }
 	}
 	if (
 		(vel.x < 0 && (
-		    get_block(this->pos.x + vel.x - this->size.x, this->pos.y, this->pos.z - this->size.z) >= 0
-		 || get_block(this->pos.x + vel.x - this->size.x, this->pos.y, this->pos.z + this->size.z) >= 0
+		    get_block(this->pos_x + vel.x - this->size_x, this->pos_y, this->pos_z - this->size_z) >= 0
+		 || get_block(this->pos_x + vel.x - this->size_x, this->pos_y, this->pos_z + this->size_z) >= 0
 		)) || (vel.x > 0 && (
-		    get_block(this->pos.x + vel.x + this->size.x, this->pos.y, this->pos.z - this->size.z) >= 0
-		 || get_block(this->pos.x + vel.x + this->size.x, this->pos.y, this->pos.z + this->size.z) >= 0
+		    get_block(this->pos_x + vel.x + this->size_x, this->pos_y, this->pos_z - this->size_z) >= 0
+		 || get_block(this->pos_x + vel.x + this->size_x, this->pos_y, this->pos_z + this->size_z) >= 0
 	  ))
-	) { this->vel.x = 0; }
+	) { this->vel_x = 0; }
 
-	for (int i = 0; i <= (int)this->size.y; i++) {
+	for (int i = 0; i <= (int)this->size_y; i++) {
 		if (
 			(vel.z < 0 && (
-			    get_block(this->pos.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z + vel.z) >= 0
-			 || get_block(this->pos.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z - this->size.z + vel.z) >= 0
+			    get_block(this->pos_x - this->size_x, this->pos_y + this->size_y - i, this->pos_z - this->size_z + vel.z) >= 0
+			 || get_block(this->pos_x + this->size_x, this->pos_y + this->size_y - i, this->pos_z - this->size_z + vel.z) >= 0
 			)) || (vel.z > 0 && (
-			    get_block(this->pos.x - this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z + vel.z) >= 0
-			 || get_block(this->pos.x + this->size.x, this->pos.y + this->size.y - i, this->pos.z + this->size.z + vel.z) >= 0
+			    get_block(this->pos_x - this->size_x, this->pos_y + this->size_y - i, this->pos_z + this->size_z + vel.z) >= 0
+			 || get_block(this->pos_x + this->size_x, this->pos_y + this->size_y - i, this->pos_z + this->size_z + vel.z) >= 0
 			))
-		) { this->vel.z = 0; }
+		) { this->vel_z = 0; }
 	}
 	if (
 		(vel.z < 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y, this->pos.z - this->size.z + vel.z) >= 0
-		 || get_block(this->pos.x + this->size.x, this->pos.y, this->pos.z - this->size.z + vel.z) >= 0
+		    get_block(this->pos_x - this->size_x, this->pos_y, this->pos_z - this->size_z + vel.z) >= 0
+		 || get_block(this->pos_x + this->size_x, this->pos_y, this->pos_z - this->size_z + vel.z) >= 0
 		)) || (vel.z > 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y, this->pos.z + this->size.z + vel.z) >= 0
-		 || get_block(this->pos.x + this->size.x, this->pos.y, this->pos.z + this->size.z + vel.z) >= 0
+		    get_block(this->pos_x - this->size_x, this->pos_y, this->pos_z + this->size_z + vel.z) >= 0
+		 || get_block(this->pos_x + this->size_x, this->pos_y, this->pos_z + this->size_z + vel.z) >= 0
 		))
-	) { this->vel.z = 0; }
+	) { this->vel_z = 0; }
 
 	if (
 		(vel.y < 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y + vel.y, this->pos.z - this->size.z) >= 0
-		 || get_block(this->pos.x - this->size.x, this->pos.y + vel.y, this->pos.z + this->size.z) >= 0
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y, this->pos.z - this->size.z) >= 0
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y, this->pos.z + this->size.z) >= 0
+		    get_block(this->pos_x - this->size_x, this->pos_y + vel.y, this->pos_z - this->size_z) >= 0
+		 || get_block(this->pos_x - this->size_x, this->pos_y + vel.y, this->pos_z + this->size_z) >= 0
+		 || get_block(this->pos_x + this->size_x, this->pos_y + vel.y, this->pos_z - this->size_z) >= 0
+		 || get_block(this->pos_x + this->size_x, this->pos_y + vel.y, this->pos_z + this->size_z) >= 0
 		)) || (vel.y > 0 && (
-		    get_block(this->pos.x - this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z - this->size.z) >= 0
-		 || get_block(this->pos.x - this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z + this->size.z) >= 0
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z - this->size.z) >= 0
-		 || get_block(this->pos.x + this->size.x, this->pos.y + vel.y + this->size.y, this->pos.z + this->size.z) >= 0
+		    get_block(this->pos_x - this->size_x, this->pos_y + vel.y + this->size_y, this->pos_z - this->size_z) >= 0
+		 || get_block(this->pos_x - this->size_x, this->pos_y + vel.y + this->size_y, this->pos_z + this->size_z) >= 0
+		 || get_block(this->pos_x + this->size_x, this->pos_y + vel.y + this->size_y, this->pos_z - this->size_z) >= 0
+		 || get_block(this->pos_x + this->size_x, this->pos_y + vel.y + this->size_y, this->pos_z + this->size_z) >= 0
 		))
-	) { this->vel.y = 0; }
+	) { this->vel_y = 0; }
 }

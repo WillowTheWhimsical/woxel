@@ -147,8 +147,8 @@ void draw_entities(Camera cam) {
 	for_entities(e)
 		if (e->tex >= 0) {
 			Texture* tex = &texture[e->tex];
-			Vector2 pdir = Vector2Normalize(Vector2Subtract((Vector2){e->pos.x, e->pos.z}, (Vector2){cam.position.x, cam.position.z}));
-			Vector2 edir = Vector2Normalize(e->dir);
+			Vector2 pdir = Vector2Normalize(Vector2Subtract(vec2(e->pos), (Vector2){cam.position.x, cam.position.z}));
+			Vector2 edir = Vector2Normalize(vec2(e->dir));
 			float angle = 180 / PI * (atan2f(-pdir.y, pdir.x) + atan2f(-edir.y, -edir.x)) + 22;
 			if (angle < 0) angle += 360;
 			int dir = angle / 45;
@@ -158,8 +158,8 @@ void draw_entities(Camera cam) {
 				flip = true;
 				offset = 8 - offset;
 			}
-			Rectangle src = {offset * e->frame_size.x + (flip ? e->frame_size.x : 0), 0, e->frame_size.x * (flip ? -1 : 1), e->frame_size.y};
-			DrawBillboardPro(cam, *tex, src, (Vector3){e->pos.x, e->pos.y, e->pos.z}, cam.up, (Vector2){1, 1}, (Vector2){0.5, 0}, 0, WHITE);
+			Rectangle src = {offset * e->frame_size_x + (flip ? e->frame_size_x : 0), 0, e->frame_size_x * (flip ? -1 : 1), e->frame_size_y};
+			DrawBillboardPro(cam, *tex, src, vec3(e->pos), cam.up, (Vector2){1, 1}, (Vector2){0.5, 0}, 0, WHITE);
 		}
 	}
 }

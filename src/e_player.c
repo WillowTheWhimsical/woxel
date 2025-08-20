@@ -55,16 +55,16 @@ void E_PLAYER_INIT(Entity* this) {
 	set_menu_option(pause_menu, 5, "Exit");
 	update_menu(pause_menu);
 
-	this->pos.x = world.w * 0.5;
-	this->pos.z = world.l * 0.5;
-	this->pos.y = 13;
+	this->pos_x = world.w * 0.5;
+	this->pos_z = world.l * 0.5;
+	this->pos_y = 13;
 
-	this->vel.x = this->vel.y = this->vel.z = 0;
+	this->vel_x = this->vel_y = this->vel_z = 0;
 
-	this->size.x = this->size.z = 0.2;
-	this->size.y = 1.8;
+	this->size_x = this->size_z = 0.2;
+	this->size_y = 1.8;
 
-	cam->position = Vector3Add(cam->position, this->pos);
+	cam->position = Vector3Add(cam->position, vec3(this->pos));
 	cam->position.y += 1.5;
 	cam->target = Vector3Add(cam->target, cam->position);
 }
@@ -90,47 +90,47 @@ void E_PLAYER_TICK(Entity* this) {
 	Menu* pause_menu = this->var[4];
 
 	Vector2 dir = get_movedir(*cam);
-	this->vel.x = dir.x * speed;
-	this->vel.z = dir.y * speed;
+	this->vel_x = dir.x * speed;
+	this->vel_z = dir.y * speed;
 
 	if (!flying) {
 		if (input.crouch) {
-			this->vel.x *= 0.5;
-			this->vel.z *= 0.5;
+			this->vel_x *= 0.5;
+			this->vel_z *= 0.5;
 		}
 
-		if (this->vel.y > terminal_vel)
-			this->vel.y -= gravity;
+		if (this->vel_y > terminal_vel)
+			this->vel_y -= gravity;
 
-		if (get_block(this->pos.x - this->size.x, this->pos.y + this->vel.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x - this->size.x, this->pos.y + this->vel.y, this->pos.z + this->size.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y + this->vel.y, this->pos.z - this->size.z) > B_AIR
-		 || get_block(this->pos.x + this->size.x, this->pos.y + this->vel.y, this->pos.z + this->size.z) > B_AIR)
+		if (get_block(this->pos_x - this->size_x, this->pos_y + this->vel_y, this->pos_z - this->size_z) > B_AIR
+		 || get_block(this->pos_x - this->size_x, this->pos_y + this->vel_y, this->pos_z + this->size_z) > B_AIR
+		 || get_block(this->pos_x + this->size_x, this->pos_y + this->vel_y, this->pos_z - this->size_z) > B_AIR
+		 || get_block(this->pos_x + this->size_x, this->pos_y + this->vel_y, this->pos_z + this->size_z) > B_AIR)
 			grounded = true;
 
 		entity_collision(this);
 
 		if (input.jump && grounded) {
-			this->vel.y = jump_speed;
+			this->vel_y = jump_speed;
 			grounded = false;
 			PlaySound(sound[S_STEP0 + GetRandomValue(0, 3)]);
 		}
 
 		if (input.crouch && grounded) {
-			if (get_block(this->pos.x + this->vel.x - this->size.x, this->pos.y - 1, this->pos.z - this->size.z) == B_AIR
-			 && get_block(this->pos.x + this->vel.x - this->size.x, this->pos.y - 1, this->pos.z + this->size.z) == B_AIR
-			 && get_block(this->pos.x + this->vel.x + this->size.x, this->pos.y - 1, this->pos.z - this->size.z) == B_AIR
-			 && get_block(this->pos.x + this->vel.x + this->size.x, this->pos.y - 1, this->pos.z + this->size.z) == B_AIR)
-				this->vel.x = 0;
+			if (get_block(this->pos_x + this->vel_x - this->size_x, this->pos_y - 1, this->pos_z - this->size_z) == B_AIR
+			 && get_block(this->pos_x + this->vel_x - this->size_x, this->pos_y - 1, this->pos_z + this->size_z) == B_AIR
+			 && get_block(this->pos_x + this->vel_x + this->size_x, this->pos_y - 1, this->pos_z - this->size_z) == B_AIR
+			 && get_block(this->pos_x + this->vel_x + this->size_x, this->pos_y - 1, this->pos_z + this->size_z) == B_AIR)
+				this->vel_x = 0;
 
-			if (get_block(this->pos.x - this->size.x, this->pos.y - 1, this->pos.z + this->vel.z - this->size.z) == B_AIR
-			 && get_block(this->pos.x - this->size.x, this->pos.y - 1, this->pos.z + this->vel.z + this->size.z) == B_AIR
-			 && get_block(this->pos.x + this->size.x, this->pos.y - 1, this->pos.z + this->vel.z - this->size.z) == B_AIR
-			 && get_block(this->pos.x + this->size.x, this->pos.y - 1, this->pos.z + this->vel.z + this->size.z) == B_AIR)
-				this->vel.z = 0;
+			if (get_block(this->pos_x - this->size_x, this->pos_y - 1, this->pos_z + this->vel_z - this->size_z) == B_AIR
+			 && get_block(this->pos_x - this->size_x, this->pos_y - 1, this->pos_z + this->vel_z + this->size_z) == B_AIR
+			 && get_block(this->pos_x + this->size_x, this->pos_y - 1, this->pos_z + this->vel_z - this->size_z) == B_AIR
+			 && get_block(this->pos_x + this->size_x, this->pos_y - 1, this->pos_z + this->vel_z + this->size_z) == B_AIR)
+				this->vel_z = 0;
 		}
 
-		float actual_speed = fabsf(this->vel.x) + fabsf(this->vel.z);
+		float actual_speed = fabsf(this->vel_x) + fabsf(this->vel_z);
 		if (grounded && actual_speed > 0) {
 			if (!IsSoundPlaying(sound[S_STEP0 + step_sound])) {
 				if (step_sound_timer >= step_sound_delay) {
@@ -147,14 +147,14 @@ void E_PLAYER_TICK(Entity* this) {
 	else {
 		if (input.jump) {
 			input.jump = false;
-			this->vel.y = speed;
+			this->vel_y = speed;
 		}
 		else if (input.crouch) {
 			input.crouch = false;
-			this->vel.y = -speed;
+			this->vel_y = -speed;
 		}
 		else
-			this->vel.y = 0;
+			this->vel_y = 0;
 	}
 
 	if (!*in_menu) {
@@ -230,9 +230,9 @@ void E_PLAYER_TICK(Entity* this) {
 		}
 	}
 
-	this->pos = Vector3Add(this->pos, this->vel);
-	cam->position = Vector3Add(cam->position, this->vel);
-	cam->target = Vector3Add(cam->target, this->vel);
+	set_vec3(this->pos, Vector3Add(vec3(this->pos), vec3(this->vel)));
+	cam->position = Vector3Add(cam->position, vec3(this->vel));
+	cam->target = Vector3Add(cam->target, vec3(this->vel));
 
 	if (input.inventory || input.pause) {
 		if (*in_menu) *in_menu = 0;
@@ -248,7 +248,7 @@ void E_PLAYER_TICK(Entity* this) {
 		PlaySound(sound[S_DENY]);
 	}
 
-	client_send(TextFormat("pos %f %f %f %d", this->pos.x, this->pos.y, this->pos.z, client_getid()));
+	client_send(TextFormat("pos %f %f %f %d", this->pos_x, this->pos_y, this->pos_z, client_getid()));
 
 	Vector2 lookdir = Vector2Normalize((Vector2){cam->target.x - cam->position.x, cam->target.z - cam->position.z});
 	client_send(TextFormat("dir %f %f %d", lookdir.x, lookdir.y, client_getid()));

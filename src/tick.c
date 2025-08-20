@@ -2,6 +2,8 @@
 #include "input.h"
 #include "entity.h"
 
+#include <raylib.h>
+
 const float TICKRATE = 1 / 60.f;
 
 float t, lt, dt, ptimer = 0;
