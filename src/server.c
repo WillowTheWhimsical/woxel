@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 	int max_clients = 2;
 
 	int opt = 0;
-	while ((opt = getopt(argc, argv, "c:") != -1)) {
+	while ((opt = getopt(argc, argv, "c:")) != -1) {
 		switch (opt) {
 			case 'c':
 				if (atoi(optarg) > 0)
